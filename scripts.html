@@ -1,0 +1,17 @@
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const today = new Date();
+
+    document.getElementById("currentDate").textContent =
+        today.toLocaleDateString("en-IN",{
+            weekday:"long",
+            day:"2-digit",
+            month:"long",
+            year:"numeric"
+        });
+
+});
+
+</script>
