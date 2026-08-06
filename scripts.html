@@ -1,17 +1,65 @@
 <script>
 
+/*=========================================
+    APP INITIALIZATION
+=========================================*/
+
 document.addEventListener("DOMContentLoaded", () => {
+
+    initializeApp();
+
+});
+
+/*=========================================
+    INITIALIZE APPLICATION
+=========================================*/
+
+function initializeApp(){
+
+    loadCurrentDate();
+    initializeSidebar();
+
+}
+
+/*=========================================
+    HEADER
+=========================================*/
+
+function loadCurrentDate(){
 
     const today = new Date();
 
     document.getElementById("currentDate").textContent =
-        today.toLocaleDateString("en-IN",{
-            weekday:"long",
-            day:"2-digit",
-            month:"long",
-            year:"numeric"
+        today.toLocaleDateString("en-IN", {
+            weekday: "long",
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
         });
 
-});
+}
+
+/*=========================================
+    SIDEBAR
+=========================================*/
+
+function initializeSidebar(){
+
+    document.querySelectorAll(".menu-item").forEach(item => {
+
+        item.addEventListener("click", function(e){
+
+            e.preventDefault();
+
+            document.querySelectorAll(".menu-item")
+                .forEach(menu => menu.classList.remove("active"));
+
+            this.classList.add("active");
+
+        });
+
+    });
+
+}
 
 </script>
