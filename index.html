@@ -134,6 +134,7 @@
 
         <tr>
 
+
           <th onclick="sortMedicines('id')">
 
             Medicine ID
@@ -143,6 +144,13 @@
               class="sort-icon">
             </span>
 
+          </th>
+
+
+          <!-- FAVORITE -->
+
+          <th class="favorite-column">
+            ⭐
           </th>
 
 
@@ -184,6 +192,13 @@
 
           <th>
 
+            Category
+
+          </th>
+
+
+          <th>
+
             Use
 
           </th>
@@ -205,7 +220,7 @@
         <tr>
 
           <td
-            colspan="6"
+            colspan="8"
             class="loading-cell">
 
             Loading medicines...
@@ -352,6 +367,80 @@
 
 
       <!-- =====================================
+           CATEGORY
+      ====================================== -->
+
+      <div class="form-group">
+
+        <label>
+          Category
+        </label>
+
+        <select id="category">
+
+          <option value="">
+            Select Category
+          </option>
+
+          <option value="Fever">
+            Fever
+          </option>
+
+          <option value="Cough & Cold">
+            Cough & Cold
+          </option>
+
+          <option value="Pain Relief">
+            Pain Relief
+          </option>
+
+          <option value="Allergy">
+            Allergy
+          </option>
+
+          <option value="Gastric & Acidity">
+            Gastric & Acidity
+          </option>
+
+          <option value="Antibiotics">
+            Antibiotics
+          </option>
+
+          <option value="Vitamins & Supplements">
+            Vitamins & Supplements
+          </option>
+
+          <option value="Diabetes">
+            Diabetes
+          </option>
+
+          <option value="Blood Pressure">
+            Blood Pressure
+          </option>
+
+          <option value="Skin">
+            Skin
+          </option>
+
+          <option value="Eye & Ear">
+            Eye & Ear
+          </option>
+
+          <option value="Digestive">
+            Digestive
+          </option>
+
+          <option value="Other">
+            Other
+          </option>
+
+        </select>
+
+      </div>
+
+
+
+      <!-- =====================================
            DESCRIPTION
       ====================================== -->
 
@@ -422,7 +511,7 @@
 
 
 
-        <!-- EXISTING GITHUB URL -->
+        <!-- PHOTO FILE NAME -->
 
         <input
           type="hidden"
@@ -506,9 +595,7 @@
     <div class="details-body">
 
 
-      <!-- =====================================
-           MEDICINE IMAGE
-      ====================================== -->
+      <!-- MEDICINE IMAGE -->
 
       <div
         id="detailsPhotoContainer"
@@ -523,9 +610,7 @@
 
 
 
-      <!-- =====================================
-           NAME
-      ====================================== -->
+      <!-- MEDICINE NAME -->
 
       <div class="details-section">
 
@@ -542,9 +627,7 @@
 
 
 
-      <!-- =====================================
-           GENERIC NAME
-      ====================================== -->
+      <!-- GENERIC NAME -->
 
       <div class="details-section">
 
@@ -561,9 +644,7 @@
 
 
 
-      <!-- =====================================
-           USED FOR
-      ====================================== -->
+      <!-- USED FOR -->
 
       <div class="details-section">
 
@@ -580,9 +661,24 @@
 
 
 
-      <!-- =====================================
-           USE
-      ====================================== -->
+      <!-- CATEGORY -->
+
+      <div class="details-section">
+
+        <div class="details-label">
+          Category
+        </div>
+
+        <div
+          id="detailsCategory"
+          class="details-value">
+        </div>
+
+      </div>
+
+
+
+      <!-- USE -->
 
       <div class="details-section">
 
@@ -599,9 +695,7 @@
 
 
 
-      <!-- =====================================
-           DESCRIPTION
-      ====================================== -->
+      <!-- DESCRIPTION -->
 
       <div class="details-section">
 
@@ -643,6 +737,81 @@
 
       </button>
 
+
+    </div>
+
+
+  </div>
+
+</div>
+
+
+
+<!-- =========================================
+     DUPLICATE MEDICINE MODAL
+========================================= -->
+
+<div
+  id="duplicateModal"
+  class="modal-overlay hidden">
+
+
+  <div class="modal duplicate-modal">
+
+
+    <div class="modal-header">
+
+      <h3>
+        Medicine Already Exists
+      </h3>
+
+
+      <button
+        class="modal-close"
+        onclick="closeDuplicateModal()">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+    <div class="modal-body">
+
+      <div class="duplicate-icon">
+        ⚠️
+      </div>
+
+
+      <p
+        id="duplicateMessage"
+        class="duplicate-message">
+
+        This medicine already exists.
+
+      </p>
+
+
+      <p class="duplicate-help">
+
+        Please check the existing medicine
+        before adding another one.
+
+      </p>
+
+    </div>
+
+
+    <div class="modal-footer">
+
+      <button
+        class="btn btn-primary"
+        onclick="closeDuplicateModal()">
+
+        OK
+
+      </button>
 
     </div>
 
