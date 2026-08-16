@@ -1,239 +1,754 @@
 <style>
 
-/*==================================================
-  RESET
-==================================================*/
+/* =========================================
+   RESET
+========================================= */
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+* {
+  box-sizing: border-box;
 }
 
-html{
-    scroll-behavior:smooth;
+html,
+body {
+  margin: 0;
+  padding: 0;
 }
 
-body{
-    font-family:var(--font-family);
-    background:var(--background);
-    color:var(--text);
-    font-size:var(--font-md);
-    line-height:1.5;
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f7fa;
+  color: #172033;
 }
 
-/*==================================================
-  LAYOUT
-==================================================*/
 
-.app-container{
-    display:flex;
-    min-height:calc(100vh - var(--header-height) - var(--footer-height));
+/* =========================================
+   HEADER
+========================================= */
+
+.app-header {
+  height: 78px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e6eb;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 20px;
 }
 
-main{
-    flex:1;
-    padding:var(--content-padding);
-    overflow:auto;
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
-/*==================================================
-  TYPOGRAPHY
-==================================================*/
+.logo {
+  width: 44px;
+  height: 44px;
 
-h1{
-    font-size:var(--font-xxl);
-    font-weight:var(--font-weight-bold);
+  background: #eaf7ee;
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 25px;
 }
 
-h2{
-    font-size:var(--font-xl);
-    font-weight:var(--font-weight-semibold);
+.app-title h1 {
+  margin: 0;
+  font-size: 22px;
 }
 
-h3{
-    font-size:var(--font-lg);
-    font-weight:var(--font-weight-semibold);
+.app-title span {
+  display: block;
+  margin-top: 2px;
+
+  color: #667085;
+  font-size: 13px;
 }
 
-p{
-    color:var(--text-secondary);
+.current-date {
+  color: #667085;
+  font-size: 14px;
 }
 
-/*==================================================
-  LINKS
-==================================================*/
 
-a{
-    text-decoration:none;
-    color:inherit;
+/* =========================================
+   MAIN
+========================================= */
+
+.main-content {
+  padding: 28px 20px;
 }
 
-/*==================================================
-  LISTS
-==================================================*/
 
-ul{
-    list-style:none;
+/* =========================================
+   PAGE HEADER
+========================================= */
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 20px;
 }
 
-/*==================================================
-  IMAGES
-==================================================*/
+.page-header h2 {
+  margin: 0;
 
-img{
-    max-width:100%;
-    display:block;
+  font-size: 22px;
+  color: #172033;
 }
 
-/*==================================================
-  UTILITIES
-==================================================*/
+.page-header p {
+  margin: 4px 0 0;
 
-.text-center{
-    text-align:center;
+  color: #667085;
+  font-size: 13px;
 }
 
-.text-right{
-    text-align:right;
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+.btn {
+  border: 0;
+  border-radius: 6px;
+
+  padding: 9px 15px;
+
+  font-size: 14px;
+  cursor: pointer;
 }
 
-.hidden{
-    display:none;
+.btn-primary {
+  background: #16a34a;
+  color: #ffffff;
 }
 
-.flex{
-    display:flex;
+.btn-primary:hover {
+  background: #15803d;
 }
 
-.flex-between{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.mt-1{margin-top:var(--space-1);}
-.mt-2{margin-top:var(--space-2);}
-.mt-3{margin-top:var(--space-3);}
-.mt-4{margin-top:var(--space-4);}
-.mt-5{margin-top:var(--space-5);}
+.btn-secondary {
+  background: #ffffff;
+  color: #344054;
 
-.mb-1{margin-bottom:var(--space-1);}
-.mb-2{margin-bottom:var(--space-2);}
-.mb-3{margin-bottom:var(--space-3);}
-.mb-4{margin-bottom:var(--space-4);}
-.mb-5{margin-bottom:var(--space-5);}
-
-/*==================================================
-  HEADER
-==================================================*/
-
-.app-header{
-    height:var(--header-height);
-    background:var(--surface);
-    border-bottom:1px solid var(--border);
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
-    padding:0 24px;
-
-    box-shadow:var(--shadow-sm);
+  border: 1px solid #d0d5dd;
 }
 
-.header-left{
-    display:flex;
-    align-items:center;
-    gap:15px;
+.btn-secondary:hover {
+  background: #f9fafb;
 }
 
-.logo{
-    width:50px;
-    height:50px;
 
-    display:flex;
-    justify-content:center;
-    align-items:center;
+/* =========================================
+   TOOLBAR
+========================================= */
 
-    font-size:28px;
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-    background:var(--primary-light);
-
-    border-radius:50%;
+  margin-bottom: 14px;
 }
 
-.app-info h1{
-    font-size:22px;
-    margin:0;
-    color:var(--text);
+.search-wrapper {
+  position: relative;
+  width: 360px;
 }
 
-.app-info span{
-    color:var(--text-secondary);
-    font-size:13px;
+.search-input {
+  width: 100%;
+
+  height: 40px;
+
+  padding: 0 38px 0 12px;
+
+  border: 1px solid #d0d5dd;
+  border-radius: 6px;
+
+  background: #ffffff;
+
+  font-size: 14px;
+
+  outline: none;
 }
 
-.header-right{
-    color:var(--text-secondary);
-    font-size:14px;
+.search-input:focus {
+  border-color: #16a34a;
 }
 
-/*==================================================
-  SIDEBAR
-==================================================*/
+.clear-search {
+  position: absolute;
 
-.sidebar{
-    width:var(--sidebar-width);
-    background:var(--surface);
-    border-right:1px solid var(--border);
-    padding:20px 0;
+  right: 8px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  width: 24px;
+  height: 24px;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: transparent;
+
+  color: #667085;
+
+  font-size: 20px;
+
+  cursor: pointer;
 }
 
-.sidebar-menu{
-    display:flex;
-    flex-direction:column;
+.clear-search:hover {
+  background: #f2f4f7;
 }
 
-.menu-item{
-
-    display:flex;
-    align-items:center;
-    gap:12px;
-
-    padding:14px 22px;
-
-    color:var(--text-secondary);
-
-    transition:var(--transition);
-
-    cursor:pointer;
+.toolbar-right {
+  color: #667085;
+  font-size: 13px;
 }
 
-.menu-item:hover{
 
-    background:var(--primary-light);
-    color:var(--primary);
+/* =========================================
+   TABLE
+========================================= */
+
+.table-container {
+  background: #ffffff;
+
+  border: 1px solid #dfe3e8;
+
+  border-radius: 8px;
+
+  overflow: hidden;
+}
+
+.medicine-table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  font-size: 14px;
+}
+
+.medicine-table th {
+  background: #f8fafc;
+
+  color: #172033;
+
+  font-weight: 600;
+
+  text-align: left;
+
+  padding: 12px 14px;
+
+  border-bottom: 1px solid #e1e5ea;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+}
+
+.medicine-table th:hover {
+  background: #f1f5f9;
+}
+
+.medicine-table td {
+  padding: 12px 14px;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  vertical-align: middle;
+}
+
+.medicine-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.medicine-table tbody tr:hover {
+  background: #fafafa;
+}
+
+
+/* =========================================
+   SORT ICON
+========================================= */
+
+.sort-icon {
+  margin-left: 5px;
+
+  color: #16a34a;
+
+  font-size: 11px;
+}
+
+
+/* =========================================
+   MEDICINE NAME
+========================================= */
+
+.medicine-name {
+  font-weight: 600;
+}
+
+.medicine-link {
+  border: 0;
+
+  padding: 0;
+
+  background: transparent;
+
+  color: #172033;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  text-align: left;
+}
+
+.medicine-link:hover {
+  color: #16a34a;
+
+  text-decoration: underline;
+}
+
+
+/* =========================================
+   ACTION BUTTONS
+========================================= */
+
+.action-button {
+  padding: 5px 10px;
+
+  margin-right: 5px;
+
+  background: #ffffff;
+
+  border: 1px solid #d0d5dd;
+
+  border-radius: 5px;
+
+  color: #344054;
+
+  font-size: 12px;
+
+  cursor: pointer;
+}
+
+.action-button:hover {
+  background: #f2f4f7;
+}
+
+.action-button.delete {
+  color: #b42318;
+}
+
+.action-button.delete:hover {
+  background: #fff1f0;
+}
+
+
+/* =========================================
+   LOADING / EMPTY / ERROR
+========================================= */
+
+.loading-cell,
+.empty-cell,
+.error-cell {
+  text-align: center;
+
+  padding: 30px !important;
+
+  color: #667085;
+}
+
+.error-cell {
+  color: #b42318;
+}
+
+
+/* =========================================
+   MODAL
+========================================= */
+
+.modal-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  background: rgba(16, 24, 40, 0.45);
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  z-index: 1000;
+}
+
+.modal-overlay.hidden {
+  display: none;
+}
+
+.modal {
+  width: 100%;
+
+  max-width: 560px;
+
+  max-height: 90vh;
+
+  background: #ffffff;
+
+  border-radius: 10px;
+
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18);
+
+  overflow: hidden;
+
+  display: flex;
+
+  flex-direction: column;
+}
+
+
+/* =========================================
+   MODAL HEADER
+========================================= */
+
+.modal-header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 16px 20px;
+
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h3 {
+  margin: 0;
+
+  font-size: 18px;
+}
+
+.modal-close {
+  width: 32px;
+  height: 32px;
+
+  border: 0;
+
+  background: transparent;
+
+  border-radius: 5px;
+
+  font-size: 24px;
+
+  color: #667085;
+
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  background: #f2f4f7;
+}
+
+
+/* =========================================
+   MODAL BODY
+========================================= */
+
+.modal-body {
+  padding: 20px;
+
+  overflow-y: auto;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #344054;
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
+
+.required {
+  color: #d92d20;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+
+  border: 1px solid #d0d5dd;
+
+  border-radius: 6px;
+
+  padding: 9px 11px;
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  outline: none;
+}
+
+.form-group input {
+  height: 40px;
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #16a34a;
+}
+
+.field-help {
+  margin-top: 5px;
+
+  color: #667085;
+
+  font-size: 11px;
+}
+
+
+/* =========================================
+   MODAL FOOTER
+========================================= */
+
+.modal-footer {
+  display: flex;
+
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 8px;
+
+  padding: 14px 20px;
+
+  border-top: 1px solid #e5e7eb;
+
+  background: #fafafa;
+}
+
+
+/* =========================================
+   DETAILS MODAL
+========================================= */
+
+.medicine-details-modal {
+  max-width: 600px;
+}
+
+.details-body {
+  padding: 20px;
+
+  overflow-y: auto;
+}
+
+
+/* =========================================
+   MEDICINE PHOTO
+========================================= */
+
+.details-photo-container {
+  width: 100%;
+
+  margin-bottom: 20px;
+
+  text-align: center;
+}
+
+.details-photo-container.hidden {
+  display: none;
+}
+
+.details-photo {
+  max-width: 280px;
+
+  max-height: 260px;
+
+  margin: 0 auto;
+
+  object-fit: contain;
+
+  border-radius: 8px;
+
+  border: 1px solid #e5e7eb;
+
+  background: #ffffff;
+}
+
+
+/* =========================================
+   DETAILS
+========================================= */
+
+.details-section {
+  margin-bottom: 16px;
+}
+
+.details-section:last-child {
+  margin-bottom: 0;
+}
+
+.details-label {
+  margin-bottom: 4px;
+
+  color: #667085;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  text-transform: uppercase;
+}
+
+.details-value {
+  color: #172033;
+
+  font-size: 14px;
+
+  line-height: 1.6;
+}
+
+.details-name {
+  font-size: 17px;
+
+  font-weight: 600;
+}
+
+.details-description {
+  white-space: pre-wrap;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 800px) {
+
+  .app-header {
+    height: auto;
+
+    padding: 14px 16px;
+
+    gap: 10px;
+  }
+
+  .current-date {
+    display: none;
+  }
+
+  .main-content {
+    padding: 20px 12px;
+  }
+
+  .page-header {
+    align-items: flex-start;
+
+    gap: 12px;
+  }
+
+  .search-wrapper {
+    width: 100%;
+  }
+
+  .toolbar {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 10px;
+  }
+
+  .toolbar-right {
+    text-align: right;
+  }
+
+  .table-container {
+    overflow-x: auto;
+  }
+
+  .medicine-table {
+    min-width: 850px;
+  }
+
+  .modal-overlay {
+    padding: 10px;
+  }
+
+  .modal {
+    max-height: 95vh;
+  }
 
 }
 
-.menu-item.active{
+/* =========================================
+   PHOTO PREVIEW
+========================================= */
 
-    background:var(--primary-light);
-    color:var(--primary);
-
-    border-right:4px solid var(--primary);
-
-    font-weight:600;
-
+.photo-preview-container {
+  margin-top: 12px;
 }
 
-.menu-icon{
+.photo-preview-container.hidden {
+  display: none;
+}
 
-    width:24px;
-    text-align:center;
-    font-size:18px;
+.photo-preview {
+  max-width: 180px;
+  max-height: 180px;
 
+  object-fit: contain;
+
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+
+  background: #ffffff;
+}
+
+.photo-upload-status {
+  margin-top: 8px;
+
+  color: #667085;
+
+  font-size: 12px;
 }
 
 </style>

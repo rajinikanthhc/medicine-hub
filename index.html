@@ -2,40 +2,663 @@
 <html>
 
 <head>
+
   <base target="_top">
 
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1">
 
   <title>Medicine Hub</title>
 
-  <?!= include('styles'); ?>
+  <?!= include("styles"); ?>
 
 </head>
 
+
 <body>
 
-  <!-- Header -->
-  <?!= include('header'); ?>
 
-  <div class="app-container">
+<!-- =========================================
+     HEADER
+========================================= -->
 
-    <!-- Sidebar -->
-    <?!= include('sidebar'); ?>
+<header class="app-header">
 
-    <!-- Main Content -->
-    <main id="content">
+  <div class="header-left">
 
-      <?!= include('dashboard'); ?>
+    <div class="logo">
+      💊
+    </div>
 
-    </main>
+    <div class="app-title">
+
+      <h1>Medicine Hub</h1>
+
+      <span>Personal Medicine List</span>
+
+    </div>
 
   </div>
 
-  <!-- Footer -->
-  <?!= include('footer'); ?>
 
-  <?!= include('scripts'); ?>
+  <div
+    class="current-date"
+    id="currentDate">
+  </div>
+
+</header>
+
+
+
+<!-- =========================================
+     MAIN
+========================================= -->
+
+<main class="main-content">
+
+
+  <div class="page-header">
+
+    <div>
+
+      <h2>Medicines</h2>
+
+      <p>
+        Manage your personal medicine list
+      </p>
+
+    </div>
+
+
+    <button
+      class="btn btn-primary"
+      onclick="openAddMedicine()">
+
+      + Add Medicine
+
+    </button>
+
+  </div>
+
+
+
+  <!-- =========================================
+       SEARCH / TOOLBAR
+  ========================================= -->
+
+  <div class="toolbar">
+
+    <div class="search-wrapper">
+
+      <input
+        type="text"
+        id="searchInput"
+        class="search-input"
+        placeholder="Search medicines..."
+        oninput="filterMedicines()">
+
+
+      <button
+        id="clearSearch"
+        class="clear-search hidden"
+        onclick="clearSearch()">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+    <div
+      class="toolbar-right"
+      id="medicineCount">
+
+      Loading...
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =========================================
+       MEDICINE TABLE
+  ========================================= -->
+
+  <div class="table-container">
+
+    <table class="medicine-table">
+
+      <thead>
+
+        <tr>
+
+          <th onclick="sortMedicines('id')">
+
+            Medicine ID
+
+            <span
+              id="sort-id"
+              class="sort-icon">
+            </span>
+
+          </th>
+
+
+          <th onclick="sortMedicines('name')">
+
+            Medicine Name
+
+            <span
+              id="sort-name"
+              class="sort-icon">
+            </span>
+
+          </th>
+
+
+          <th onclick="sortMedicines('genericName')">
+
+            Generic Name
+
+            <span
+              id="sort-genericName"
+              class="sort-icon">
+            </span>
+
+          </th>
+
+
+          <th onclick="sortMedicines('usedFor')">
+
+            Used For
+
+            <span
+              id="sort-usedFor"
+              class="sort-icon">
+            </span>
+
+          </th>
+
+
+          <th>
+
+            Use
+
+          </th>
+
+
+          <th>
+
+            Actions
+
+          </th>
+
+        </tr>
+
+      </thead>
+
+
+      <tbody id="medicineTableBody">
+
+        <tr>
+
+          <td
+            colspan="6"
+            class="loading-cell">
+
+            Loading medicines...
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+
+</main>
+
+
+
+<!-- =========================================
+     ADD / EDIT MEDICINE MODAL
+========================================= -->
+
+<div
+  id="medicineModal"
+  class="modal-overlay hidden">
+
+
+  <div class="modal">
+
+
+    <!-- MODAL HEADER -->
+
+    <div class="modal-header">
+
+      <h3 id="modalTitle">
+        Add Medicine
+      </h3>
+
+
+      <button
+        class="modal-close"
+        onclick="closeMedicineModal()">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+
+    <!-- MODAL BODY -->
+
+    <div class="modal-body">
+
+
+      <!-- MEDICINE ID -->
+
+      <input
+        type="hidden"
+        id="medicineId">
+
+
+
+      <!-- =====================================
+           MEDICINE NAME
+      ====================================== -->
+
+      <div class="form-group">
+
+        <label>
+
+          Medicine Name
+
+          <span class="required">*</span>
+
+        </label>
+
+        <input
+          type="text"
+          id="medicineName"
+          placeholder="Enter medicine name">
+
+      </div>
+
+
+
+      <!-- =====================================
+           GENERIC NAME
+      ====================================== -->
+
+      <div class="form-group">
+
+        <label>
+          Generic Name
+        </label>
+
+        <input
+          type="text"
+          id="genericName"
+          placeholder="Enter generic name">
+
+      </div>
+
+
+
+      <!-- =====================================
+           USED FOR
+      ====================================== -->
+
+      <div class="form-group">
+
+        <label>
+          Used For
+        </label>
+
+        <input
+          type="text"
+          id="usedFor"
+          placeholder="Example: Cough, Fever">
+
+      </div>
+
+
+
+      <!-- =====================================
+           USE
+      ====================================== -->
+
+      <div class="form-group">
+
+        <label>
+          Use
+        </label>
+
+        <input
+          type="text"
+          id="medicineUse"
+          placeholder="Example: 6 ml after food anytime">
+
+      </div>
+
+
+
+      <!-- =====================================
+           DESCRIPTION
+      ====================================== -->
+
+      <div class="form-group">
+
+        <label>
+          Description
+        </label>
+
+        <textarea
+          id="description"
+          rows="4"
+          placeholder="Enter medicine description"></textarea>
+
+      </div>
+
+
+
+      <!-- =====================================
+           MEDICINE PHOTO
+      ====================================== -->
+
+      <div class="form-group">
+
+        <label>
+          Medicine Photo
+        </label>
+
+
+        <input
+          type="file"
+          id="photoFile"
+          accept="image/*"
+          onchange="previewMedicinePhoto()">
+
+
+
+        <div class="field-help">
+
+          Select a medicine photo.
+          It will be uploaded to GitHub automatically.
+
+        </div>
+
+
+
+        <!-- PHOTO PREVIEW -->
+
+        <div
+          id="photoPreviewContainer"
+          class="photo-preview-container hidden">
+
+          <img
+            id="photoPreview"
+            class="photo-preview"
+            alt="Medicine photo preview">
+
+        </div>
+
+
+
+        <!-- UPLOAD STATUS -->
+
+        <div
+          id="photoUploadStatus"
+          class="photo-upload-status">
+        </div>
+
+
+
+        <!-- EXISTING GITHUB URL -->
+
+        <input
+          type="hidden"
+          id="photo">
+
+      </div>
+
+
+    </div>
+
+
+
+    <!-- MODAL FOOTER -->
+
+    <div class="modal-footer">
+
+
+      <button
+        class="btn btn-secondary"
+        onclick="closeMedicineModal()">
+
+        Cancel
+
+      </button>
+
+
+      <button
+        class="btn btn-primary"
+        id="saveMedicineButton"
+        onclick="saveMedicine()">
+
+        Save
+
+      </button>
+
+
+    </div>
+
+
+  </div>
+
+</div>
+
+
+
+<!-- =========================================
+     MEDICINE DETAILS MODAL
+========================================= -->
+
+<div
+  id="detailsModal"
+  class="modal-overlay hidden">
+
+
+  <div class="modal medicine-details-modal">
+
+
+    <!-- DETAILS HEADER -->
+
+    <div class="modal-header">
+
+      <h3 id="detailsTitle">
+        Medicine Details
+      </h3>
+
+
+      <button
+        class="modal-close"
+        onclick="closeDetailsModal()">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+
+    <!-- DETAILS BODY -->
+
+    <div class="details-body">
+
+
+      <!-- =====================================
+           MEDICINE IMAGE
+      ====================================== -->
+
+      <div
+        id="detailsPhotoContainer"
+        class="details-photo-container hidden">
+
+        <img
+          id="detailsPhoto"
+          class="details-photo"
+          alt="Medicine photo">
+
+      </div>
+
+
+
+      <!-- =====================================
+           NAME
+      ====================================== -->
+
+      <div class="details-section">
+
+        <div class="details-label">
+          Medicine Name
+        </div>
+
+        <div
+          id="detailsName"
+          class="details-value details-name">
+        </div>
+
+      </div>
+
+
+
+      <!-- =====================================
+           GENERIC NAME
+      ====================================== -->
+
+      <div class="details-section">
+
+        <div class="details-label">
+          Generic Name
+        </div>
+
+        <div
+          id="detailsGeneric"
+          class="details-value">
+        </div>
+
+      </div>
+
+
+
+      <!-- =====================================
+           USED FOR
+      ====================================== -->
+
+      <div class="details-section">
+
+        <div class="details-label">
+          Used For
+        </div>
+
+        <div
+          id="detailsUsedFor"
+          class="details-value">
+        </div>
+
+      </div>
+
+
+
+      <!-- =====================================
+           USE
+      ====================================== -->
+
+      <div class="details-section">
+
+        <div class="details-label">
+          Use
+        </div>
+
+        <div
+          id="detailsUse"
+          class="details-value">
+        </div>
+
+      </div>
+
+
+
+      <!-- =====================================
+           DESCRIPTION
+      ====================================== -->
+
+      <div class="details-section">
+
+        <div class="details-label">
+          Description
+        </div>
+
+        <div
+          id="detailsDescription"
+          class="details-value details-description">
+        </div>
+
+      </div>
+
+
+    </div>
+
+
+
+    <!-- DETAILS FOOTER -->
+
+    <div class="modal-footer">
+
+
+      <button
+        class="btn btn-secondary"
+        onclick="closeDetailsModal()">
+
+        Close
+
+      </button>
+
+
+      <button
+        class="btn btn-primary"
+        id="detailsEditButton">
+
+        Edit Medicine
+
+      </button>
+
+
+    </div>
+
+
+  </div>
+
+</div>
+
+
+
+<!-- =========================================
+     JAVASCRIPT
+========================================= -->
+
+<?!= include("scripts"); ?>
+
 
 </body>
 

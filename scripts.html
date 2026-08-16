@@ -1,65 +1,1452 @@
 <script>
 
-/*=========================================
-    APP INITIALIZATION
-=========================================*/
+/* =========================================
+   MEDICINE DATA
+========================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
+let medicines = [];
 
-    initializeApp();
+let filteredMedicines = [];
+
+let editingMedicineId = null;
+
+let currentSortField = "id";
+
+let currentSortDirection = "asc";
+
+
+/* =========================================
+   PAGE LOAD
+========================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  setCurrentDate();
+
+  loadMedicines();
 
 });
 
-/*=========================================
-    INITIALIZE APPLICATION
-=========================================*/
 
-function initializeApp(){
+/* =========================================
+   CURRENT DATE
+========================================= */
 
-    loadCurrentDate();
-    initializeSidebar();
+function setCurrentDate() {
 
-}
+  const element =
+    document.getElementById("currentDate");
 
-/*=========================================
-    HEADER
-=========================================*/
+  if (!element) return;
 
-function loadCurrentDate(){
+  const today = new Date();
 
-    const today = new Date();
-
-    document.getElementById("currentDate").textContent =
-        today.toLocaleDateString("en-IN", {
-            weekday: "long",
-            day: "2-digit",
-            month: "long",
-            year: "numeric"
-        });
+  element.textContent =
+    today.toLocaleDateString(
+      "en-IN",
+      {
+        weekday: "long",
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+      }
+    );
 
 }
 
-/*=========================================
-    SIDEBAR
-=========================================*/
 
-function initializeSidebar(){
+/* =========================================
+   LOAD MEDICINES
+========================================= */
 
-    document.querySelectorAll(".menu-item").forEach(item => {
+function loadMedicines() {
 
-        item.addEventListener("click", function(e){
+  const body =
+    document.getElementById(
+      "medicineTableBody"
+    );
 
-            e.preventDefault();
+  body.innerHTML = `
+    <tr>
+      <td colspan="6" class="loading-cell">
+        Loading medicines...
+      </td>
+    </tr>
+  `;
 
-            document.querySelectorAll(".menu-item")
-                .forEach(menu => menu.classList.remove("active"));
 
-            this.classList.add("active");
+  google.script.run
 
-        });
+    .withSuccessHandler(function (data) {
 
-    });
+      medicines =
+        Array.isArray(data)
+          ? data
+          : [];
 
+      filteredMedicines =
+        [...medicines];
+
+      sortAndRender();
+
+    })
+
+    .withFailureHandler(function (error) {
+
+      body.innerHTML = `
+        <tr>
+          <td colspan="6" class="error-cell">
+            Unable to load medicines.
+          </td>
+        </tr>
+      `;
+
+      console.error(error);
+
+    })
+
+    .getMedicines();
+
+}
+
+
+/* =========================================
+   RENDER TABLE
+========================================= */
+
+function renderMedicines() {
+
+  const body =
+    document.getElementById(
+      "medicineTableBody"
+    );
+
+
+  if (!filteredMedicines.length) {
+
+    body.innerHTML = `
+      <tr>
+        <td colspan="6" class="empty-cell">
+          No medicines found.
+        </td>
+      </tr>
+    `;
+
+    updateMedicineCount();
+
+    return;
+
+  }
+
+
+  body.innerHTML =
+    filteredMedicines
+      .map(function (medicine) {
+
+        return `
+
+          <tr>
+
+            <td>
+              ${escapeHtml(
+                medicine.id ?? ""
+              )}
+            </td>
+
+
+            <td class="medicine-name">
+
+              <button
+                class="medicine-link"
+                onclick="openMedicineDetails(${Number(medicine.id)})">
+
+                ${escapeHtml(
+                  medicine.name ?? ""
+                )}
+
+              </button>
+
+            </td>
+
+
+            <td>
+              ${escapeHtml(
+                medicine.genericName || "-"
+              )}
+            </td>
+
+
+            <td>
+              ${escapeHtml(
+                medicine.usedFor || "-"
+              )}
+            </td>
+
+
+            <td>
+              ${escapeHtml(
+                medicine.use || "-"
+              )}
+            </td>
+
+
+            <td>
+
+              <button
+                class="action-button"
+                onclick="openEditMedicine(${Number(medicine.id)})">
+
+                Edit
+
+              </button>
+
+
+              <button
+                class="action-button delete"
+                onclick="deleteMedicine(${Number(medicine.id)})">
+
+                Delete
+
+              </button>
+
+            </td>
+
+          </tr>
+
+        `;
+
+      })
+      .join("");
+
+
+  updateMedicineCount();
+
+  updateSortIcons();
+
+}
+
+
+/* =========================================
+   MEDICINE COUNT
+========================================= */
+
+function updateMedicineCount() {
+
+  const element =
+    document.getElementById(
+      "medicineCount"
+    );
+
+  if (!element) return;
+
+  const count =
+    filteredMedicines.length;
+
+  element.textContent =
+    count +
+    (count === 1
+      ? " medicine"
+      : " medicines");
+
+}
+
+
+/* =========================================
+   SEARCH
+========================================= */
+
+function filterMedicines() {
+
+  const input =
+    document.getElementById(
+      "searchInput"
+    );
+
+  const search =
+    input.value
+      .trim()
+      .toLowerCase();
+
+
+  const clearButton =
+    document.getElementById(
+      "clearSearch"
+    );
+
+
+  if (search) {
+
+    clearButton.classList.remove(
+      "hidden"
+    );
+
+  } else {
+
+    clearButton.classList.add(
+      "hidden"
+    );
+
+  }
+
+
+  if (!search) {
+
+    filteredMedicines =
+      [...medicines];
+
+  } else {
+
+    filteredMedicines =
+      medicines.filter(
+        function (medicine) {
+
+          return (
+
+            String(
+              medicine.id || ""
+            )
+              .toLowerCase()
+              .includes(search)
+
+            ||
+
+            String(
+              medicine.name || ""
+            )
+              .toLowerCase()
+              .includes(search)
+
+            ||
+
+            String(
+              medicine.genericName || ""
+            )
+              .toLowerCase()
+              .includes(search)
+
+            ||
+
+            String(
+              medicine.usedFor || ""
+            )
+              .toLowerCase()
+              .includes(search)
+
+            ||
+
+            String(
+              medicine.use || ""
+            )
+              .toLowerCase()
+              .includes(search)
+
+          );
+
+        }
+      );
+
+  }
+
+
+  sortAndRender();
+
+}
+
+
+/* =========================================
+   CLEAR SEARCH
+========================================= */
+
+function clearSearch() {
+
+  const input =
+    document.getElementById(
+      "searchInput"
+    );
+
+  input.value = "";
+
+  filterMedicines();
+
+  input.focus();
+
+}
+
+
+/* =========================================
+   SORT
+========================================= */
+
+function sortMedicines(field) {
+
+  if (
+    currentSortField === field
+  ) {
+
+    currentSortDirection =
+      currentSortDirection === "asc"
+        ? "desc"
+        : "asc";
+
+  } else {
+
+    currentSortField = field;
+
+    currentSortDirection = "asc";
+
+  }
+
+
+  sortAndRender();
+
+}
+
+
+/* =========================================
+   SORT + RENDER
+========================================= */
+
+function sortAndRender() {
+
+  filteredMedicines.sort(
+    function (a, b) {
+
+      let valueA;
+      let valueB;
+
+
+      if (
+        currentSortField === "id"
+      ) {
+
+        valueA =
+          Number(a.id) || 0;
+
+        valueB =
+          Number(b.id) || 0;
+
+      } else if (
+        currentSortField === "name"
+      ) {
+
+        valueA =
+          String(a.name || "")
+            .toLowerCase();
+
+        valueB =
+          String(b.name || "")
+            .toLowerCase();
+
+      } else {
+
+        valueA =
+          String(
+            a[currentSortField] || ""
+          )
+            .toLowerCase();
+
+        valueB =
+          String(
+            b[currentSortField] || ""
+          )
+            .toLowerCase();
+
+      }
+
+
+      if (valueA < valueB) {
+
+        return currentSortDirection === "asc"
+          ? -1
+          : 1;
+
+      }
+
+
+      if (valueA > valueB) {
+
+        return currentSortDirection === "asc"
+          ? 1
+          : -1;
+
+      }
+
+
+      return 0;
+
+    }
+  );
+
+
+  renderMedicines();
+
+}
+
+
+/* =========================================
+   SORT ICONS
+========================================= */
+
+function updateSortIcons() {
+
+  const fields = [
+    "id",
+    "name",
+    "genericName",
+    "usedFor"
+  ];
+
+
+  fields.forEach(
+    function (field) {
+
+      const element =
+        document.getElementById(
+          "sort-" + field
+        );
+
+      if (!element) return;
+
+
+      if (
+        field === currentSortField
+      ) {
+
+        element.textContent =
+          currentSortDirection === "asc"
+            ? "▲"
+            : "▼";
+
+      } else {
+
+        element.textContent = "";
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================
+   ADD MEDICINE
+========================================= */
+
+function openAddMedicine() {
+
+  editingMedicineId = null;
+
+
+  document.getElementById(
+    "modalTitle"
+  ).textContent =
+    "Add Medicine";
+
+
+  clearMedicineForm();
+
+
+  document.getElementById(
+    "medicineModal"
+  ).classList.remove(
+    "hidden"
+  );
+
+
+  setTimeout(
+    function () {
+
+      document.getElementById(
+        "medicineName"
+      ).focus();
+
+    },
+    100
+  );
+
+}
+
+
+/* =========================================
+   CLEAR FORM
+========================================= */
+
+function clearMedicineForm() {
+
+  document.getElementById(
+    "medicineId"
+  ).value = "";
+
+  document.getElementById(
+    "medicineName"
+  ).value = "";
+
+  document.getElementById(
+    "genericName"
+  ).value = "";
+
+  document.getElementById(
+    "usedFor"
+  ).value = "";
+
+  document.getElementById(
+    "medicineUse"
+  ).value = "";
+
+  document.getElementById(
+    "description"
+  ).value = "";
+
+  document.getElementById(
+    "photo"
+  ).value = "";
+
+  document.getElementById(
+    "photoFile"
+  ).value = "";
+
+
+  clearPhotoPreview();
+
+}
+
+
+/* =========================================
+   EDIT MEDICINE
+========================================= */
+
+function openEditMedicine(id) {
+
+  const medicine =
+    medicines.find(
+      function (item) {
+
+        return Number(item.id) === Number(id);
+
+      }
+    );
+
+
+  if (!medicine) {
+
+    alert("Medicine not found.");
+
+    return;
+
+  }
+
+
+  editingMedicineId =
+    Number(medicine.id);
+
+
+  document.getElementById(
+    "modalTitle"
+  ).textContent =
+    "Edit Medicine";
+
+
+  document.getElementById(
+    "medicineId"
+  ).value =
+    medicine.id;
+
+
+  document.getElementById(
+    "medicineName"
+  ).value =
+    medicine.name || "";
+
+
+  document.getElementById(
+    "genericName"
+  ).value =
+    medicine.genericName || "";
+
+
+  document.getElementById(
+    "usedFor"
+  ).value =
+    medicine.usedFor || "";
+
+
+  document.getElementById(
+    "medicineUse"
+  ).value =
+    medicine.use || "";
+
+
+  document.getElementById(
+    "description"
+  ).value =
+    medicine.description || "";
+
+
+  document.getElementById(
+    "photo"
+  ).value =
+    medicine.photo || "";
+
+
+  document.getElementById(
+    "photoFile"
+  ).value = "";
+
+
+  clearPhotoPreview();
+
+
+  /*
+   * Show existing image
+   * when editing.
+   */
+
+  if (medicine.photo) {
+
+    showPhotoPreview(
+      medicine.photo
+    );
+
+  }
+
+
+  document.getElementById(
+    "medicineModal"
+  ).classList.remove(
+    "hidden"
+  );
+
+}
+
+
+/* =========================================
+   CLOSE ADD / EDIT MODAL
+========================================= */
+
+function closeMedicineModal() {
+
+  document.getElementById(
+    "medicineModal"
+  ).classList.add(
+    "hidden"
+  );
+
+  editingMedicineId = null;
+
+}
+
+
+/* =========================================
+   PREVIEW SELECTED PHOTO
+========================================= */
+
+function previewMedicinePhoto() {
+
+  const input =
+    document.getElementById(
+      "photoFile"
+    );
+
+
+  if (
+    !input.files ||
+    !input.files.length
+  ) {
+
+    return;
+
+  }
+
+
+  const file =
+    input.files[0];
+
+
+  if (
+    !file.type.startsWith("image/")
+  ) {
+
+    alert(
+      "Please select an image file."
+    );
+
+    input.value = "";
+
+    return;
+
+  }
+
+
+  const reader =
+    new FileReader();
+
+
+  reader.onload =
+    function (event) {
+
+      showPhotoPreview(
+        event.target.result
+      );
+
+    };
+
+
+  reader.readAsDataURL(file);
+
+}
+
+
+/* =========================================
+   SHOW PHOTO PREVIEW
+========================================= */
+
+function showPhotoPreview(src) {
+
+  const container =
+    document.getElementById(
+      "photoPreviewContainer"
+    );
+
+  const image =
+    document.getElementById(
+      "photoPreview"
+    );
+
+
+  image.src = src;
+
+  container.classList.remove(
+    "hidden"
+  );
+
+}
+
+
+/* =========================================
+   CLEAR PHOTO PREVIEW
+========================================= */
+
+function clearPhotoPreview() {
+
+  const container =
+    document.getElementById(
+      "photoPreviewContainer"
+    );
+
+  const image =
+    document.getElementById(
+      "photoPreview"
+    );
+
+  const status =
+    document.getElementById(
+      "photoUploadStatus"
+    );
+
+
+  container.classList.add(
+    "hidden"
+  );
+
+  image.src = "";
+
+  status.textContent = "";
+
+}
+
+
+/* =========================================
+   SAVE MEDICINE
+========================================= */
+
+function saveMedicine() {
+
+  const name =
+    document.getElementById(
+      "medicineName"
+    ).value.trim();
+
+
+  if (!name) {
+
+    alert(
+      "Please enter medicine name."
+    );
+
+    document.getElementById(
+      "medicineName"
+    ).focus();
+
+    return;
+
+  }
+
+
+  const saveButton =
+    document.getElementById(
+      "saveMedicineButton"
+    );
+
+
+  saveButton.disabled = true;
+
+  saveButton.textContent =
+    "Saving...";
+
+
+  const photoFile =
+    document.getElementById(
+      "photoFile"
+    ).files[0];
+
+
+  if (photoFile) {
+
+    uploadPhotoThenSave(
+      photoFile,
+      name
+    );
+
+  } else {
+
+    saveMedicineData();
+
+  }
+
+}
+
+/* =========================================
+   UPLOAD PHOTO THEN SAVE
+========================================= */
+
+function uploadPhotoThenSave(
+  file,
+  medicineName
+) {
+
+  const status =
+    document.getElementById(
+      "photoUploadStatus"
+    );
+
+
+  status.textContent =
+    "Uploading photo...";
+
+
+  const reader =
+    new FileReader();
+
+
+  reader.onload =
+    function (event) {
+
+      const fileData =
+        event.target.result;
+
+
+      google.script.run
+
+        .withSuccessHandler(
+          function (result) {
+
+            if (
+              !result ||
+              !result.success ||
+              !result.fileName
+            ) {
+
+              photoUploadFailed(
+                "GitHub upload did not return a file name."
+              );
+
+              return;
+
+            }
+
+
+            /*
+             * Store ONLY the filename
+             * in the Photo field.
+             */
+
+            document.getElementById(
+              "photo"
+            ).value =
+              result.fileName;
+
+
+            status.textContent =
+              "Photo uploaded successfully.";
+
+
+            saveMedicineData();
+
+          }
+        )
+
+        .withFailureHandler(
+          function (error) {
+
+            photoUploadFailed(
+              error &&
+              error.message
+                ? error.message
+                : "Photo upload failed."
+            );
+
+          }
+        )
+
+        .uploadMedicinePhoto(
+          fileData,
+          file.name,
+          medicineName
+        );
+
+    };
+
+
+  reader.onerror =
+    function () {
+
+      photoUploadFailed(
+        "Unable to read the selected photo."
+      );
+
+    };
+
+
+  reader.readAsDataURL(file);
+
+}
+
+/* =========================================
+   PHOTO UPLOAD FAILED
+========================================= */
+
+function photoUploadFailed(message) {
+
+  const saveButton =
+    document.getElementById(
+      "saveMedicineButton"
+    );
+
+
+  saveButton.disabled = false;
+
+  saveButton.textContent =
+    "Save";
+
+
+  document.getElementById(
+    "photoUploadStatus"
+  ).textContent =
+    "";
+
+
+  alert(
+    "Photo upload failed.\n\n" +
+    message
+  );
+
+}
+
+
+/* =========================================
+   SAVE MEDICINE DATA
+========================================= */
+
+function saveMedicineData() {
+
+  const medicine = {
+
+    id:
+      document.getElementById(
+        "medicineId"
+      ).value,
+
+    name:
+      document.getElementById(
+        "medicineName"
+      ).value.trim(),
+
+    genericName:
+      document.getElementById(
+        "genericName"
+      ).value.trim(),
+
+    usedFor:
+      document.getElementById(
+        "usedFor"
+      ).value.trim(),
+
+    use:
+      document.getElementById(
+        "medicineUse"
+      ).value.trim(),
+
+    description:
+      document.getElementById(
+        "description"
+      ).value.trim(),
+
+    photo:
+      document.getElementById(
+        "photo"
+      ).value.trim()
+
+  };
+
+
+  const isEdit =
+    editingMedicineId !== null;
+
+
+  const serverFunction =
+    isEdit
+      ? "updateMedicine"
+      : "addMedicine";
+
+
+  google.script.run
+
+    .withSuccessHandler(
+      function () {
+
+        closeMedicineModal();
+
+        loadMedicines();
+
+      }
+    )
+
+    .withFailureHandler(
+      function (error) {
+
+        const saveButton =
+          document.getElementById(
+            "saveMedicineButton"
+          );
+
+
+        saveButton.disabled = false;
+
+        saveButton.textContent =
+          "Save";
+
+
+        alert(
+          error &&
+          error.message
+            ? error.message
+            : "Unable to save medicine."
+        );
+
+      }
+    )
+
+    [serverFunction](
+      medicine
+    );
+
+}
+
+/* =========================================
+   DELETE MEDICINE
+========================================= */
+
+function deleteMedicine(id) {
+
+  const passcode =
+    prompt("Enter delete passcode:");
+
+  if (passcode === null) {
+    return;
+  }
+
+  if (passcode !== "12345") {
+
+    alert("Incorrect passcode.");
+
+    return;
+  }
+
+
+  const confirmed =
+    confirm(
+      "Are you sure you want to delete this medicine?"
+    );
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  google.script.run
+
+    .withSuccessHandler(function(result) {
+
+      alert("Medicine deleted successfully.");
+
+      loadMedicines();
+
+    })
+
+    .withFailureHandler(function(error) {
+
+      alert(
+        error.message ||
+        "Unable to delete medicine."
+      );
+
+    })
+
+    .deleteMedicine(
+      id,
+      passcode
+    );
+
+}
+
+/* =========================================
+   MEDICINE DETAILS
+========================================= */
+
+function openMedicineDetails(id) {
+
+  const medicine =
+    medicines.find(
+      function (item) {
+
+        return Number(item.id) === Number(id);
+
+      }
+    );
+
+
+  if (!medicine) {
+
+    alert("Medicine not found.");
+
+    return;
+
+  }
+
+
+  document.getElementById(
+    "detailsTitle"
+  ).textContent =
+    medicine.name || "Medicine Details";
+
+
+  document.getElementById(
+    "detailsName"
+  ).textContent =
+    medicine.name || "-";
+
+
+  document.getElementById(
+    "detailsGeneric"
+  ).textContent =
+    medicine.genericName || "-";
+
+
+  document.getElementById(
+    "detailsUsedFor"
+  ).textContent =
+    medicine.usedFor || "-";
+
+
+  document.getElementById(
+    "detailsUse"
+  ).textContent =
+    medicine.use || "-";
+
+
+  document.getElementById(
+    "detailsDescription"
+  ).textContent =
+    medicine.description || "-";
+
+
+  const photoContainer =
+    document.getElementById(
+      "detailsPhotoContainer"
+    );
+
+  const photo =
+    document.getElementById(
+      "detailsPhoto"
+    );
+
+
+  if (medicine.photo) {
+
+  photo.src =
+    getMedicinePhotoUrl(
+      medicine.photo
+    );
+
+  photoContainer.classList.remove(
+    "hidden"
+  );
+
+} else {
+
+    photo.src = "";
+
+    photoContainer.classList.add(
+      "hidden"
+    );
+
+  }
+
+
+  document.getElementById(
+    "detailsEditButton"
+  ).onclick =
+    function () {
+
+      closeDetailsModal();
+
+      openEditMedicine(
+        Number(medicine.id)
+      );
+
+    };
+
+
+  document.getElementById(
+    "detailsModal"
+  ).classList.remove(
+    "hidden"
+  );
+
+}
+
+
+/* =========================================
+   CLOSE DETAILS
+========================================= */
+
+function closeDetailsModal() {
+
+  document.getElementById(
+    "detailsModal"
+  ).classList.add(
+    "hidden"
+  );
+
+}
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHtml(value) {
+
+  return String(value ?? "")
+
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+
+    .replace(
+      /</g,
+      "&lt;"
+    )
+
+    .replace(
+      />/g,
+      "&gt;"
+    )
+
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+
+/* =========================================
+   CLOSE MODALS WITH ESC KEY
+========================================= */
+
+document.addEventListener(
+  "keydown",
+  function (event) {
+
+    if (event.key !== "Escape") {
+      return;
+    }
+
+
+    const medicineModal =
+      document.getElementById(
+        "medicineModal"
+      );
+
+    const detailsModal =
+      document.getElementById(
+        "detailsModal"
+      );
+
+
+    if (
+      medicineModal &&
+      !medicineModal.classList.contains(
+        "hidden"
+      )
+    ) {
+
+      closeMedicineModal();
+
+      return;
+
+    }
+
+
+    if (
+      detailsModal &&
+      !detailsModal.classList.contains(
+        "hidden"
+      )
+    ) {
+
+      closeDetailsModal();
+
+    }
+
+  }
+);
+
+/* =========================================
+   MEDICINE PHOTO URL
+========================================= */
+
+function getMedicinePhotoUrl(photo) {
+
+  if (!photo) {
+    return "";
+  }
+
+  if (photo.startsWith("http")) {
+    return photo;
+  }
+
+  return "https://raw.githubusercontent.com/" +
+    "rajinikanthhc/images/main/medicines/" +
+    encodeURIComponent(photo);
 }
 
 </script>
