@@ -19,13 +19,16 @@ let currentSortDirection = "asc";
    PAGE LOAD
 ========================================= */
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener(
+  "DOMContentLoaded",
+  function () {
 
-  setCurrentDate();
+    setCurrentDate();
 
-  loadMedicines();
+    loadMedicines();
 
-});
+  }
+);
 
 
 /* =========================================
@@ -35,7 +38,9 @@ document.addEventListener("DOMContentLoaded", function () {
 function setCurrentDate() {
 
   const element =
-    document.getElementById("currentDate");
+    document.getElementById(
+      "currentDate"
+    );
 
   if (!element) return;
 
@@ -66,6 +71,8 @@ function loadMedicines() {
       "medicineTableBody"
     );
 
+  if (!body) return;
+
   body.innerHTML = `
     <tr>
       <td colspan="8" class="loading-cell">
@@ -77,33 +84,37 @@ function loadMedicines() {
 
   google.script.run
 
-    .withSuccessHandler(function (data) {
+    .withSuccessHandler(
+      function (data) {
 
-      medicines =
-        Array.isArray(data)
-          ? data
-          : [];
+        medicines =
+          Array.isArray(data)
+            ? data
+            : [];
 
-      filteredMedicines =
-        [...medicines];
+        filteredMedicines =
+          [...medicines];
 
-      sortAndRender();
+        sortAndRender();
 
-    })
+      }
+    )
 
-    .withFailureHandler(function (error) {
+    .withFailureHandler(
+      function (error) {
 
-      body.innerHTML = `
-        <tr>
-          <td colspan="8" class="error-cell">
-            Unable to load medicines.
-          </td>
-        </tr>
-      `;
+        body.innerHTML = `
+          <tr>
+            <td colspan="8" class="error-cell">
+              Unable to load medicines.
+            </td>
+          </tr>
+        `;
 
-      console.error(error);
+        console.error(error);
 
-    })
+      }
+    )
 
     .getMedicines();
 
@@ -120,6 +131,8 @@ function renderMedicines() {
     document.getElementById(
       "medicineTableBody"
     );
+
+  if (!body) return;
 
 
   if (!filteredMedicines.length) {
@@ -141,133 +154,179 @@ function renderMedicines() {
 
   body.innerHTML =
     filteredMedicines
-      .map(function (medicine) {
+      .map(
+        function (medicine) {
 
-        const favorite =
-          isFavorite(medicine.favorite);
-
-
-        return `
-
-          <tr>
-
-            <!-- MEDICINE ID -->
-
-            <td>
-              ${escapeHtml(
-                medicine.id ?? ""
-              )}
-            </td>
+          const favorite =
+            isFavorite(
+              medicine.favorite
+            );
 
 
-            <!-- FAVORITE -->
+          return `
 
-            <td class="favorite-column">
+            <tr>
 
-              <button
-                type="button"
-                class="favorite-button ${favorite ? "favorite-active" : ""}"
-                onclick="toggleFavorite(${Number(medicine.id)})"
-                title="${favorite ? "Remove favorite" : "Mark as favorite"}">
+              <!-- MEDICINE ID -->
 
-                ${favorite ? "★" : "☆"}
-
-              </button>
-
-            </td>
-
-
-            <!-- MEDICINE NAME -->
-
-            <td class="medicine-name">
-
-              <button
-                class="medicine-link"
-                onclick="openMedicineDetails(${Number(medicine.id)})">
+              <td>
 
                 ${escapeHtml(
-                  medicine.name ?? ""
+                  medicine.id ?? ""
                 )}
 
-              </button>
-
-            </td>
+              </td>
 
 
-            <!-- GENERIC NAME -->
+              <!-- FAVORITE -->
 
-            <td>
-              ${escapeHtml(
-                medicine.genericName || "-"
-              )}
-            </td>
+              <td class="favorite-column">
 
+                <button
+                  type="button"
+                  class="favorite-button ${
+                    favorite
+                      ? "favorite-active"
+                      : ""
+                  }"
+                  onclick="
+                    toggleFavorite(
+                      ${Number(medicine.id)}
+                    )
+                  "
+                  title="${
+                    favorite
+                      ? "Remove favorite"
+                      : "Mark as favorite"
+                  }">
 
-            <!-- USED FOR -->
+                  ${
+                    favorite
+                      ? "★"
+                      : "☆"
+                  }
 
-            <td>
-              ${escapeHtml(
-                medicine.usedFor || "-"
-              )}
-            </td>
+                </button>
 
-
-            <!-- CATEGORY -->
-
-            <td>
-
-              ${
-                medicine.category
-                  ? `
-                    <span class="category-badge">
-                      ${escapeHtml(
-                        medicine.category
-                      )}
-                    </span>
-                  `
-                  : "-"
-              }
-
-            </td>
+              </td>
 
 
-            <!-- USE -->
+              <!-- MEDICINE NAME -->
 
-            <td>
-              ${escapeHtml(
-                medicine.use || "-"
-              )}
-            </td>
+              <td class="medicine-name">
+
+                <button
+                  type="button"
+                  class="medicine-link"
+                  onclick="
+                    openMedicineDetails(
+                      ${Number(medicine.id)}
+                    )
+                  ">
+
+                  ${escapeHtml(
+                    medicine.name ?? ""
+                  )}
+
+                </button>
+
+              </td>
 
 
-            <!-- ACTIONS -->
+              <!-- GENERIC NAME -->
 
-            <td>
+              <td>
 
-              <button
-                class="action-button"
-                onclick="openEditMedicine(${Number(medicine.id)})">
+                ${escapeHtml(
+                  medicine.genericName || "-"
+                )}
 
-                Edit
-
-              </button>
+              </td>
 
 
-              <button
-                class="action-button delete"
-                onclick="deleteMedicine(${Number(medicine.id)})">
+              <!-- USED FOR -->
 
-                Delete
+              <td>
 
-              </button>
+                ${escapeHtml(
+                  medicine.usedFor || "-"
+                )}
 
-            </td>
+              </td>
 
-          </tr>
 
-        `;
+              <!-- CATEGORY -->
 
-      })
+              <td>
+
+                ${
+                  medicine.category
+                    ? `
+                      <span
+                        class="category-badge">
+
+                        ${escapeHtml(
+                          medicine.category
+                        )}
+
+                      </span>
+                    `
+                    : "-"
+                }
+
+              </td>
+
+
+              <!-- USE -->
+
+              <td>
+
+                ${escapeHtml(
+                  medicine.use || "-"
+                )}
+
+              </td>
+
+
+              <!-- ACTIONS -->
+
+              <td>
+
+                <button
+                  type="button"
+                  class="action-button"
+                  onclick="
+                    openEditMedicine(
+                      ${Number(medicine.id)}
+                    )
+                  ">
+
+                  Edit
+
+                </button>
+
+
+                <button
+                  type="button"
+                  class="action-button delete"
+                  onclick="
+                    deleteMedicine(
+                      ${Number(medicine.id)}
+                    )
+                  ">
+
+                  Delete
+
+                </button>
+
+              </td>
+
+            </tr>
+
+          `;
+
+        }
+      )
       .join("");
 
 
@@ -320,7 +379,10 @@ function toggleFavorite(id) {
     medicines.find(
       function (item) {
 
-        return Number(item.id) === Number(id);
+        return (
+          Number(item.id) ===
+          Number(id)
+        );
 
       }
     );
@@ -339,10 +401,6 @@ function toggleFavorite(id) {
     );
 
 
-  /*
-   * Update immediately on screen.
-   */
-
   medicine.favorite =
     newFavorite;
 
@@ -350,40 +408,34 @@ function toggleFavorite(id) {
   sortAndRender();
 
 
-  /*
-   * Save to Google Sheet.
-   */
-
   google.script.run
 
-    .withSuccessHandler(function () {
+    .withSuccessHandler(
+      function () {
 
-      /*
-       * Nothing else required.
-       */
+        /* Saved */
 
-    })
+      }
+    )
 
-    .withFailureHandler(function (error) {
+    .withFailureHandler(
+      function (error) {
 
-      /*
-       * Revert if saving failed.
-       */
+        medicine.favorite =
+          !newFavorite;
 
-      medicine.favorite =
-        !newFavorite;
-
-      sortAndRender();
+        sortAndRender();
 
 
-      alert(
-        error &&
-        error.message
-          ? error.message
-          : "Unable to update favorite."
-      );
+        alert(
+          error &&
+          error.message
+            ? error.message
+            : "Unable to update favorite."
+        );
 
-    })
+      }
+    )
 
     .toggleFavorite(
       id
@@ -405,14 +457,18 @@ function updateMedicineCount() {
 
   if (!element) return;
 
+
   const count =
     filteredMedicines.length;
 
+
   element.textContent =
     count +
-    (count === 1
-      ? " medicine"
-      : " medicines");
+    (
+      count === 1
+        ? " medicine"
+        : " medicines"
+    );
 
 }
 
@@ -428,6 +484,9 @@ function filterMedicines() {
       "searchInput"
     );
 
+  if (!input) return;
+
+
   const search =
     input.value
       .trim()
@@ -440,17 +499,21 @@ function filterMedicines() {
     );
 
 
-  if (search) {
+  if (clearButton) {
 
-    clearButton.classList.remove(
-      "hidden"
-    );
+    if (search) {
 
-  } else {
+      clearButton.classList.remove(
+        "hidden"
+      );
 
-    clearButton.classList.add(
-      "hidden"
-    );
+    } else {
+
+      clearButton.classList.add(
+        "hidden"
+      );
+
+    }
 
   }
 
@@ -538,6 +601,9 @@ function clearSearch() {
       "searchInput"
     );
 
+  if (!input) return;
+
+
   input.value = "";
 
   filterMedicines();
@@ -546,6 +612,10 @@ function clearSearch() {
 
 }
 
+
+/* =========================================
+   SORT
+========================================= */
 
 /* =========================================
    SORT
@@ -564,9 +634,11 @@ function sortMedicines(field) {
 
   } else {
 
-    currentSortField = field;
+    currentSortField =
+      field;
 
-    currentSortDirection = "asc";
+    currentSortDirection =
+      "asc";
 
   }
 
@@ -575,9 +647,9 @@ function sortMedicines(field) {
 
 }
 
-
-/* =========================================
+  /* =========================================
    SORT + RENDER
+   FAVORITES ALWAYS ON TOP
 ========================================= */
 
 function sortAndRender() {
@@ -585,9 +657,9 @@ function sortAndRender() {
   filteredMedicines.sort(
     function (a, b) {
 
-      /*
-       * FAVORITES ALWAYS FIRST
-       */
+      /* -------------------------------------
+         1. FAVORITES ALWAYS COME FIRST
+      ------------------------------------- */
 
       const favoriteA =
         isFavorite(a.favorite);
@@ -596,16 +668,16 @@ function sortAndRender() {
         isFavorite(b.favorite);
 
 
-      if (
-        favoriteA !== favoriteB
-      ) {
+      if (favoriteA !== favoriteB) {
 
-        return favoriteA
-          ? -1
-          : 1;
+        return favoriteA ? -1 : 1;
 
       }
 
+
+      /* -------------------------------------
+         2. NORMAL SORT
+      ------------------------------------- */
 
       let valueA;
       let valueB;
@@ -621,7 +693,9 @@ function sortAndRender() {
         valueB =
           Number(b.id) || 0;
 
-      } else {
+      }
+
+      else {
 
         valueA =
           String(
@@ -640,18 +714,22 @@ function sortAndRender() {
 
       if (valueA < valueB) {
 
-        return currentSortDirection === "asc"
-          ? -1
-          : 1;
+        return (
+          currentSortDirection === "asc"
+            ? -1
+            : 1
+        );
 
       }
 
 
       if (valueA > valueB) {
 
-        return currentSortDirection === "asc"
-          ? 1
-          : -1;
+        return (
+          currentSortDirection === "asc"
+            ? 1
+            : -1
+        );
 
       }
 
@@ -666,7 +744,6 @@ function sortAndRender() {
 
 }
 
-
 /* =========================================
    SORT ICONS
 ========================================= */
@@ -677,7 +754,8 @@ function updateSortIcons() {
     "id",
     "name",
     "genericName",
-    "usedFor"
+    "usedFor",
+    "category"
   ];
 
 
@@ -688,6 +766,7 @@ function updateSortIcons() {
         document.getElementById(
           "sort-" + field
         );
+
 
       if (!element) return;
 
@@ -703,12 +782,41 @@ function updateSortIcons() {
 
       } else {
 
-        element.textContent = "";
+        element.textContent =
+          "";
 
       }
 
     }
   );
+
+}
+
+/* =========================================
+   RESET SAVE BUTTON
+========================================= */
+
+function resetSaveButton() {
+
+  const saveButton =
+    document.getElementById(
+      "saveMedicineButton"
+    );
+
+
+  if (!saveButton) {
+
+    return;
+
+  }
+
+
+  saveButton.disabled =
+    false;
+
+
+  saveButton.textContent =
+    "Save";
 
 }
 
@@ -719,7 +827,16 @@ function updateSortIcons() {
 
 function openAddMedicine() {
 
-  editingMedicineId = null;
+  editingMedicineId =
+    null;
+
+
+  /*
+   * IMPORTANT:
+   * Reset previous Saving state.
+   */
+
+  resetSaveButton();
 
 
   document.getElementById(
@@ -741,9 +858,16 @@ function openAddMedicine() {
   setTimeout(
     function () {
 
-      document.getElementById(
-        "medicineName"
-      ).focus();
+      const nameInput =
+        document.getElementById(
+          "medicineName"
+        );
+
+      if (nameInput) {
+
+        nameInput.focus();
+
+      }
 
     },
     100
@@ -760,35 +884,51 @@ function clearMedicineForm() {
 
   document.getElementById(
     "medicineId"
-  ).value = "";
+  ).value =
+    "";
 
   document.getElementById(
     "medicineName"
-  ).value = "";
+  ).value =
+    "";
 
   document.getElementById(
     "genericName"
-  ).value = "";
+  ).value =
+    "";
 
   document.getElementById(
     "usedFor"
-  ).value = "";
+  ).value =
+    "";
 
   document.getElementById(
     "medicineUse"
-  ).value = "";
+  ).value =
+    "";
 
   document.getElementById(
     "description"
-  ).value = "";
+  ).value =
+    "";
 
   document.getElementById(
     "photo"
-  ).value = "";
+  ).value =
+    "";
 
-  document.getElementById(
-    "photoFile"
-  ).value = "";
+
+  const photoFile =
+    document.getElementById(
+      "photoFile"
+    );
+
+  if (photoFile) {
+
+    photoFile.value =
+      "";
+
+  }
 
 
   const category =
@@ -798,7 +938,8 @@ function clearMedicineForm() {
 
   if (category) {
 
-    category.value = "";
+    category.value =
+      "";
 
   }
 
@@ -818,7 +959,10 @@ function openEditMedicine(id) {
     medicines.find(
       function (item) {
 
-        return Number(item.id) === Number(id);
+        return (
+          Number(item.id) ===
+          Number(id)
+        );
 
       }
     );
@@ -826,11 +970,22 @@ function openEditMedicine(id) {
 
   if (!medicine) {
 
-    alert("Medicine not found.");
+    alert(
+      "Medicine not found."
+    );
 
     return;
 
   }
+
+
+  /*
+   * IMPORTANT:
+   * Reset Save button every time
+   * Edit modal opens.
+   */
+
+  resetSaveButton();
 
 
   editingMedicineId =
@@ -902,13 +1057,29 @@ function openEditMedicine(id) {
   }
 
 
-  document.getElementById(
-    "photoFile"
-  ).value = "";
+  /*
+   * Clear new photo selection.
+   */
+
+  const photoFile =
+    document.getElementById(
+      "photoFile"
+    );
+
+  if (photoFile) {
+
+    photoFile.value =
+      "";
+
+  }
 
 
   clearPhotoPreview();
 
+
+  /*
+   * Show existing photo.
+   */
 
   if (medicine.photo) {
 
@@ -942,7 +1113,18 @@ function closeMedicineModal() {
     "hidden"
   );
 
-  editingMedicineId = null;
+
+  /*
+   * IMPORTANT:
+   * Always restore Save button
+   * before next Add/Edit.
+   */
+
+  resetSaveButton();
+
+
+  editingMedicineId =
+    null;
 
 }
 
@@ -960,6 +1142,7 @@ function previewMedicinePhoto() {
 
 
   if (
+    !input ||
     !input.files ||
     !input.files.length
   ) {
@@ -974,14 +1157,17 @@ function previewMedicinePhoto() {
 
 
   if (
-    !file.type.startsWith("image/")
+    !file.type.startsWith(
+      "image/"
+    )
   ) {
 
     alert(
       "Please select an image file."
     );
 
-    input.value = "";
+    input.value =
+      "";
 
     return;
 
@@ -1002,7 +1188,9 @@ function previewMedicinePhoto() {
     };
 
 
-  reader.readAsDataURL(file);
+  reader.readAsDataURL(
+    file
+  );
 
 }
 
@@ -1024,7 +1212,15 @@ function showPhotoPreview(src) {
     );
 
 
-  image.src = src;
+  if (!container || !image) {
+
+    return;
+
+  }
+
+
+  image.src =
+    src;
 
   container.classList.remove(
     "hidden"
@@ -1066,14 +1262,16 @@ function clearPhotoPreview() {
 
   if (image) {
 
-    image.src = "";
+    image.src =
+      "";
 
   }
 
 
   if (status) {
 
-    status.textContent = "";
+    status.textContent =
+      "";
 
   }
 
@@ -1108,7 +1306,7 @@ function saveMedicine() {
 
 
   /*
-   * CHECK DUPLICATE BEFORE SAVE
+   * CHECK DUPLICATE
    */
 
   const duplicate =
@@ -1125,8 +1323,12 @@ function saveMedicine() {
 
 
         const differentMedicine =
-          Number(medicine.id) !==
-          Number(editingMedicineId);
+          Number(
+            medicine.id
+          ) !==
+          Number(
+            editingMedicineId
+          );
 
 
         return (
@@ -1155,7 +1357,8 @@ function saveMedicine() {
     );
 
 
-  saveButton.disabled = true;
+  saveButton.disabled =
+    true;
 
   saveButton.textContent =
     "Saving...";
@@ -1205,11 +1408,19 @@ function showDuplicatePopup(name) {
   }
 
 
-  document.getElementById(
-    "duplicateModal"
-  ).classList.remove(
-    "hidden"
-  );
+  const modal =
+    document.getElementById(
+      "duplicateModal"
+    );
+
+
+  if (modal) {
+
+    modal.classList.remove(
+      "hidden"
+    );
+
+  }
 
 }
 
@@ -1220,11 +1431,27 @@ function showDuplicatePopup(name) {
 
 function closeDuplicateModal() {
 
-  document.getElementById(
-    "duplicateModal"
-  ).classList.add(
-    "hidden"
-  );
+  const modal =
+    document.getElementById(
+      "duplicateModal"
+    );
+
+
+  if (modal) {
+
+    modal.classList.add(
+      "hidden"
+    );
+
+  }
+
+
+  /*
+   * Duplicate check does not save anything,
+   * so restore Save button.
+   */
+
+  resetSaveButton();
 
 }
 
@@ -1244,8 +1471,12 @@ function uploadPhotoThenSave(
     );
 
 
-  status.textContent =
-    "Uploading photo...";
+  if (status) {
+
+    status.textContent =
+      "Uploading photo...";
+
+  }
 
 
   const reader =
@@ -1279,14 +1510,23 @@ function uploadPhotoThenSave(
             }
 
 
+            /*
+             * Store ONLY filename
+             * in the Photo field.
+             */
+
             document.getElementById(
               "photo"
             ).value =
               result.fileName;
 
 
-            status.textContent =
-              "Photo uploaded successfully.";
+            if (status) {
+
+              status.textContent =
+                "Photo uploaded successfully.";
+
+            }
 
 
             saveMedicineData();
@@ -1326,7 +1566,9 @@ function uploadPhotoThenSave(
     };
 
 
-  reader.readAsDataURL(file);
+  reader.readAsDataURL(
+    file
+  );
 
 }
 
@@ -1335,7 +1577,9 @@ function uploadPhotoThenSave(
    PHOTO UPLOAD FAILED
 ========================================= */
 
-function photoUploadFailed(message) {
+function photoUploadFailed(
+  message
+) {
 
   const saveButton =
     document.getElementById(
@@ -1343,16 +1587,29 @@ function photoUploadFailed(message) {
     );
 
 
-  saveButton.disabled = false;
+  if (saveButton) {
 
-  saveButton.textContent =
-    "Save";
+    saveButton.disabled =
+      false;
+
+    saveButton.textContent =
+      "Save";
+
+  }
 
 
-  document.getElementById(
-    "photoUploadStatus"
-  ).textContent =
-    "";
+  const status =
+    document.getElementById(
+      "photoUploadStatus"
+    );
+
+
+  if (status) {
+
+    status.textContent =
+      "";
+
+  }
 
 
   alert(
@@ -1369,6 +1626,25 @@ function photoUploadFailed(message) {
 
 function saveMedicineData() {
 
+  const category =
+    document.getElementById(
+      "category"
+    );
+
+
+  const existingMedicine =
+    medicines.find(
+      function (item) {
+
+        return (
+          Number(item.id) ===
+          Number(editingMedicineId)
+        );
+
+      }
+    );
+
+
   const medicine = {
 
     id:
@@ -1376,52 +1652,60 @@ function saveMedicineData() {
         "medicineId"
       ).value,
 
+
     name:
       document.getElementById(
         "medicineName"
       ).value.trim(),
+
 
     genericName:
       document.getElementById(
         "genericName"
       ).value.trim(),
 
+
     usedFor:
       document.getElementById(
         "usedFor"
       ).value.trim(),
+
 
     use:
       document.getElementById(
         "medicineUse"
       ).value.trim(),
 
+
     description:
       document.getElementById(
         "description"
       ).value.trim(),
+
 
     photo:
       document.getElementById(
         "photo"
       ).value.trim(),
 
+
     category:
-      document.getElementById(
-        "category"
-      ).value,
+      category
+        ? category.value
+        : "",
+
+
+    /*
+     * Keep existing favorite value
+     * while editing.
+     */
 
     favorite:
       editingMedicineId !== null
         ? isFavorite(
-            (
-              medicines.find(
-                function (item) {
-                  return Number(item.id) ===
-                    Number(editingMedicineId);
-                }
-              ) || {}
-            ).favorite
+            existingMedicine
+              ? existingMedicine.favorite
+              : false
           )
         : false
 
@@ -1459,15 +1743,19 @@ function saveMedicineData() {
           );
 
 
-        saveButton.disabled = false;
+        if (saveButton) {
 
-        saveButton.textContent =
-          "Save";
+          saveButton.disabled =
+            false;
+
+          saveButton.textContent =
+            "Save";
+
+        }
 
 
         /*
-         * Handle backend duplicate
-         * response if applicable.
+         * Backend duplicate handling.
          */
 
         if (
@@ -1475,7 +1763,9 @@ function saveMedicineData() {
           error.message &&
           error.message
             .toLowerCase()
-            .includes("duplicate")
+            .includes(
+              "duplicate"
+            )
         ) {
 
           showDuplicatePopup(
@@ -1511,16 +1801,25 @@ function saveMedicineData() {
 function deleteMedicine(id) {
 
   const passcode =
-    prompt("Enter delete passcode:");
+    prompt(
+      "Enter delete passcode:"
+    );
+
 
   if (passcode === null) {
+
     return;
+
   }
 
 
-  if (passcode !== "12345") {
+  if (
+    passcode !== "12345"
+  ) {
 
-    alert("Incorrect passcode.");
+    alert(
+      "Incorrect passcode."
+    );
 
     return;
 
@@ -1534,32 +1833,38 @@ function deleteMedicine(id) {
 
 
   if (!confirmed) {
+
     return;
+
   }
 
 
   google.script.run
 
-    .withSuccessHandler(function() {
+    .withSuccessHandler(
+      function () {
 
-      alert(
-        "Medicine deleted successfully."
-      );
+        alert(
+          "Medicine deleted successfully."
+        );
 
-      loadMedicines();
+        loadMedicines();
 
-    })
+      }
+    )
 
-    .withFailureHandler(function(error) {
+    .withFailureHandler(
+      function (error) {
 
-      alert(
-        error &&
-        error.message
-          ? error.message
-          : "Unable to delete medicine."
-      );
+        alert(
+          error &&
+          error.message
+            ? error.message
+            : "Unable to delete medicine."
+        );
 
-    })
+      }
+    )
 
     .deleteMedicine(
       id,
@@ -1579,8 +1884,10 @@ function openMedicineDetails(id) {
     medicines.find(
       function (item) {
 
-        return Number(item.id) ===
-          Number(id);
+        return (
+          Number(item.id) ===
+          Number(id)
+        );
 
       }
     );
@@ -1588,7 +1895,9 @@ function openMedicineDetails(id) {
 
   if (!medicine) {
 
-    alert("Medicine not found.");
+    alert(
+      "Medicine not found."
+    );
 
     return;
 
@@ -1605,32 +1914,41 @@ function openMedicineDetails(id) {
   document.getElementById(
     "detailsName"
   ).textContent =
-    medicine.name || "-";
+    medicine.name ||
+    "-";
 
 
   document.getElementById(
     "detailsGeneric"
   ).textContent =
-    medicine.genericName || "-";
+    medicine.genericName ||
+    "-";
 
 
   document.getElementById(
     "detailsUsedFor"
   ).textContent =
-    medicine.usedFor || "-";
+    medicine.usedFor ||
+    "-";
 
 
   document.getElementById(
     "detailsUse"
   ).textContent =
-    medicine.use || "-";
+    medicine.use ||
+    "-";
 
 
   document.getElementById(
     "detailsDescription"
   ).textContent =
-    medicine.description || "-";
+    medicine.description ||
+    "-";
 
+
+  /*
+   * CATEGORY
+   */
 
   const detailsCategory =
     document.getElementById(
@@ -1641,10 +1959,15 @@ function openMedicineDetails(id) {
   if (detailsCategory) {
 
     detailsCategory.textContent =
-      medicine.category || "-";
+      medicine.category ||
+      "-";
 
   }
 
+
+  /*
+   * PHOTO
+   */
 
   const photoContainer =
     document.getElementById(
@@ -1658,7 +1981,11 @@ function openMedicineDetails(id) {
     );
 
 
-  if (medicine.photo) {
+  if (
+    medicine.photo &&
+    photoContainer &&
+    photo
+  ) {
 
     photo.src =
       getMedicinePhotoUrl(
@@ -1669,9 +1996,15 @@ function openMedicineDetails(id) {
       "hidden"
     );
 
-  } else {
+  }
 
-    photo.src = "";
+  else if (
+    photoContainer &&
+    photo
+  ) {
+
+    photo.src =
+      "";
 
     photoContainer.classList.add(
       "hidden"
@@ -1680,18 +2013,32 @@ function openMedicineDetails(id) {
   }
 
 
-  document.getElementById(
-    "detailsEditButton"
-  ).onclick =
-    function () {
+  /*
+   * EDIT BUTTON
+   */
 
-      closeDetailsModal();
+  const editButton =
+    document.getElementById(
+      "detailsEditButton"
+    );
 
-      openEditMedicine(
-        Number(medicine.id)
-      );
 
-    };
+  if (editButton) {
+
+    editButton.onclick =
+      function () {
+
+        closeDetailsModal();
+
+        openEditMedicine(
+          Number(
+            medicine.id
+          )
+        );
+
+      };
+
+  }
 
 
   document.getElementById(
@@ -1724,7 +2071,9 @@ function closeDetailsModal() {
 
 function escapeHtml(value) {
 
-  return String(value ?? "")
+  return String(
+    value ?? ""
+  )
 
     .replace(
       /&/g,
@@ -1762,8 +2111,13 @@ document.addEventListener(
   "keydown",
   function (event) {
 
-    if (event.key !== "Escape") {
+    if (
+      event.key !==
+      "Escape"
+    ) {
+
       return;
+
     }
 
 
@@ -1785,6 +2139,10 @@ document.addEventListener(
       );
 
 
+    /*
+     * Duplicate popup first.
+     */
+
     if (
       duplicateModal &&
       !duplicateModal.classList.contains(
@@ -1799,6 +2157,10 @@ document.addEventListener(
     }
 
 
+    /*
+     * Add/Edit modal.
+     */
+
     if (
       medicineModal &&
       !medicineModal.classList.contains(
@@ -1812,6 +2174,10 @@ document.addEventListener(
 
     }
 
+
+    /*
+     * Details modal.
+     */
 
     if (
       detailsModal &&
@@ -1832,15 +2198,20 @@ document.addEventListener(
    MEDICINE PHOTO URL
 ========================================= */
 
-function getMedicinePhotoUrl(photo) {
+function getMedicinePhotoUrl(
+  photo
+) {
 
   if (!photo) {
+
     return "";
+
   }
 
 
   if (
-    photo.startsWith("http")
+    String(photo)
+      .startsWith("http")
   ) {
 
     return photo;
@@ -1848,9 +2219,11 @@ function getMedicinePhotoUrl(photo) {
   }
 
 
-  return "https://raw.githubusercontent.com/" +
+  return (
+    "https://raw.githubusercontent.com/" +
     "rajinikanthhc/images/main/medicines/" +
-    encodeURIComponent(photo);
+    encodeURIComponent(photo)
+  );
 
 }
 
