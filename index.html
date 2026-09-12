@@ -5,8 +5,10 @@
 
   <base target="_top">
 
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
 
   <title>Medicine Hub</title>
 
@@ -18,89 +20,75 @@
 <body>
 
 
-<!-- =========================================
+<!-- =====================================================
      HEADER
-========================================= -->
+===================================================== -->
 
-<header class="app-header">
+<header class="top-header">
 
-  <div class="header-left">
 
-    <div class="logo">
+  <div class="brand">
+
+    <div class="brand-icon">
       💊
     </div>
 
-    <div class="app-title">
-
-      <h1>Medicine Hub</h1>
-
-      <span>Personal Medicine List</span>
-
-    </div>
-
-  </div>
-
-
-  <div
-    class="current-date"
-    id="currentDate">
-  </div>
-
-</header>
-
-
-
-<!-- =========================================
-     MAIN
-========================================= -->
-
-<main class="main-content">
-
-
-  <div class="page-header">
-
     <div>
 
-      <h2>Medicines</h2>
+      <div class="brand-title">
+        Medicine Hub
+      </div>
 
-      <p>
-        Manage your personal medicine list
-      </p>
+      <div class="brand-subtitle">
+        My Personal Medicine List
+      </div>
 
     </div>
 
+  </div>
+
+
+
+  <div class="header-controls">
+
+
+    <!-- FAVORITES -->
 
     <button
-      class="btn btn-primary"
-      onclick="openAddMedicine()">
+      class="favorites-button"
+      id="favoritesButton"
+      onclick="showFavorites()">
 
-      + Add Medicine
+      ⭐ Favorites
+
+      <span
+        id="favoriteCount"
+        class="count-badge">
+        0
+      </span>
 
     </button>
 
-  </div>
 
 
+    <!-- SEARCH -->
 
-  <!-- =========================================
-       SEARCH / TOOLBAR
-  ========================================= -->
+    <div class="search-box">
 
-  <div class="toolbar">
-
-    <div class="search-wrapper">
+      <span class="search-icon">
+        🔍
+      </span>
 
       <input
-        type="text"
         id="searchInput"
-        class="search-input"
-        placeholder="Search medicines..."
-        oninput="filterMedicines()">
-
+        type="text"
+        placeholder="Search medicine or category..."
+        oninput="handleSearch()"
+      >
 
       <button
         id="clearSearch"
-        class="clear-search hidden"
+        class="search-clear hidden"
         onclick="clearSearch()">
 
         ×
@@ -110,150 +98,203 @@
     </div>
 
 
-    <div
-      class="toolbar-right"
-      id="medicineCount">
 
-      Loading...
+    <!-- SORT -->
+
+    <select
+      id="sortSelect"
+      class="sort-select"
+      onchange="changeSort()">
+
+      <option value="az">
+        A → Z
+      </option>
+
+      <option value="za">
+        Z → A
+      </option>
+
+    </select>
+
+
+
+    <!-- SETTINGS -->
+
+    <button
+      class="settings-button"
+      onclick="openSettings()">
+
+      ⚙️ Settings
+
+    </button>
+
+
+  </div>
+
+</header>
+
+
+
+<!-- =====================================================
+     CATEGORY AREA
+===================================================== -->
+
+<section class="category-area">
+
+
+  <button
+    class="category-arrow"
+    onclick="scrollCategories(-1)">
+
+    ‹
+
+  </button>
+
+
+
+  <div
+    id="categoryScroller"
+    class="category-scroller">
+  </div>
+
+
+
+  <button
+    class="category-arrow"
+    onclick="scrollCategories(1)">
+
+    ›
+
+  </button>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="main-content">
+
+
+  <section class="medicine-panel">
+
+
+    <!-- PANEL HEADER -->
+
+    <div class="panel-header">
+
+
+      <div>
+
+        <div class="panel-title-row">
+
+          <span
+            id="selectedCategoryIcon"
+            class="panel-icon">
+
+            💊
+
+          </span>
+
+
+          <h2 id="selectedCategoryTitle">
+            All Medicines
+          </h2>
+
+        </div>
+
+
+        <div
+          id="selectedCategoryCount"
+          class="panel-subtitle">
+
+          0 medicines
+
+        </div>
+
+      </div>
+
+
+
+      <button
+        class="add-button"
+        onclick="openAddMedicine()">
+
+        + Add Medicine
+
+      </button>
+
 
     </div>
 
-  </div>
 
 
+    <!-- =================================================
+         TABLE
+    ================================================= -->
 
-  <!-- =========================================
-       MEDICINE TABLE
-  ========================================= -->
+    <div class="table-wrapper">
 
-  <div class="table-container">
-
-    <table class="medicine-table">
-
-      <thead>
-
-        <tr>
+      <table class="medicine-table">
 
 
-          <th onclick="sortMedicines('id')">
+        <thead>
 
-            Medicine ID
+          <tr>
 
-            <span
-              id="sort-id"
-              class="sort-icon">
-            </span>
+            <th class="favorite-column">
+              ⭐
+            </th>
 
-          </th>
+            <th>
+              Medicine Name
+            </th>
 
+            <th>
+              Category
+            </th>
 
-          <!-- FAVORITE -->
+            <th>
+              Online Link
+            </th>
 
-          <th class="favorite-column">
-            ⭐
-          </th>
+            <th>
+              Generic Name
+            </th>
 
+            <th class="edit-column">
+              Edit
+            </th>
 
-          <th onclick="sortMedicines('name')">
+          </tr>
 
-            Medicine Name
-
-            <span
-              id="sort-name"
-              class="sort-icon">
-            </span>
-
-          </th>
-
-
-          <th onclick="sortMedicines('genericName')">
-
-            Generic Name
-
-            <span
-              id="sort-genericName"
-              class="sort-icon">
-            </span>
-
-          </th>
+        </thead>
 
 
-          <th onclick="sortMedicines('usedFor')">
+        <tbody
+          id="medicineTableBody">
 
-            Used For
-
-            <span
-              id="sort-usedFor"
-              class="sort-icon">
-            </span>
-
-          </th>
-
-          <th onclick="sortMedicines('category')">
-
-  Category
-
-  <span
-    id="sort-category"
-    class="sort-icon">
-  </span>
-
-</th>
+        </tbody>
 
 
-          <th>
+      </table>
 
-            Category
-
-          </th>
+    </div>
 
 
-          <th>
-
-            Use
-
-          </th>
-
-
-          <th>
-
-            Actions
-
-          </th>
-
-        </tr>
-
-      </thead>
-
-
-      <tbody id="medicineTableBody">
-
-        <tr>
-
-          <td
-            colspan="8"
-            class="loading-cell">
-
-            Loading medicines...
-
-          </td>
-
-        </tr>
-
-      </tbody>
-
-    </table>
-
-  </div>
+  </section>
 
 
 </main>
 
 
 
-<!-- =========================================
+<!-- =====================================================
      ADD / EDIT MEDICINE MODAL
-========================================= -->
+===================================================== -->
 
 <div
   id="medicineModal"
@@ -263,7 +304,7 @@
   <div class="modal">
 
 
-    <!-- MODAL HEADER -->
+    <!-- HEADER -->
 
     <div class="modal-header">
 
@@ -273,7 +314,7 @@
 
 
       <button
-        class="modal-close"
+        class="close-button"
         onclick="closeMedicineModal()">
 
         ×
@@ -284,22 +325,12 @@
 
 
 
-    <!-- MODAL BODY -->
+    <!-- BODY -->
 
     <div class="modal-body">
 
 
-      <!-- MEDICINE ID -->
-
-      <input
-        type="hidden"
-        id="medicineId">
-
-
-
-      <!-- =====================================
-           MEDICINE NAME
-      ====================================== -->
+      <!-- MEDICINE NAME -->
 
       <div class="form-group">
 
@@ -307,79 +338,24 @@
 
           Medicine Name
 
-          <span class="required">*</span>
+          <span class="required">
+            *
+          </span>
 
         </label>
 
+
         <input
-          type="text"
           id="medicineName"
-          placeholder="Enter medicine name">
-
-      </div>
-
-
-
-      <!-- =====================================
-           GENERIC NAME
-      ====================================== -->
-
-      <div class="form-group">
-
-        <label>
-          Generic Name
-        </label>
-
-        <input
           type="text"
-          id="genericName"
-          placeholder="Enter generic name">
+          placeholder="Enter medicine name"
+        >
 
       </div>
 
 
 
-      <!-- =====================================
-           USED FOR
-      ====================================== -->
-
-      <div class="form-group">
-
-        <label>
-          Used For
-        </label>
-
-        <input
-          type="text"
-          id="usedFor"
-          placeholder="Example: Cough, Fever">
-
-      </div>
-
-
-
-      <!-- =====================================
-           USE
-      ====================================== -->
-
-      <div class="form-group">
-
-        <label>
-          Use
-        </label>
-
-        <input
-          type="text"
-          id="medicineUse"
-          placeholder="Example: 6 ml after food anytime">
-
-      </div>
-
-
-
-      <!-- =====================================
-           CATEGORY
-      ====================================== -->
+      <!-- CATEGORY -->
 
       <div class="form-group">
 
@@ -387,62 +363,12 @@
           Category
         </label>
 
-        <select id="category">
+
+        <select
+          id="medicineCategory">
 
           <option value="">
-            Select Category
-          </option>
-
-          <option value="Fever">
-            Fever
-          </option>
-
-          <option value="Cough & Cold">
-            Cough & Cold
-          </option>
-
-          <option value="Pain Relief">
-            Pain Relief
-          </option>
-
-          <option value="Allergy">
-            Allergy
-          </option>
-
-          <option value="Gastric & Acidity">
-            Gastric & Acidity
-          </option>
-
-          <option value="Antibiotics">
-            Antibiotics
-          </option>
-
-          <option value="Vitamins & Supplements">
-            Vitamins & Supplements
-          </option>
-
-          <option value="Diabetes">
-            Diabetes
-          </option>
-
-          <option value="Blood Pressure">
-            Blood Pressure
-          </option>
-
-          <option value="Skin">
-            Skin
-          </option>
-
-          <option value="Eye & Ear">
-            Eye & Ear
-          </option>
-
-          <option value="Digestive">
-            Digestive
-          </option>
-
-          <option value="Other">
-            Other
+            Select category
           </option>
 
         </select>
@@ -451,82 +377,60 @@
 
 
 
-      <!-- =====================================
-           DESCRIPTION
-      ====================================== -->
+      <!-- ONLINE LINK -->
 
       <div class="form-group">
 
         <label>
-          Description
+          Online Link
         </label>
 
-        <textarea
-          id="description"
-          rows="4"
-          placeholder="Enter medicine description"></textarea>
+
+        <input
+          id="medicineOnlineLink"
+          type="url"
+          placeholder="https://..."
+        >
 
       </div>
 
 
 
-      <!-- =====================================
-           MEDICINE PHOTO
-      ====================================== -->
+      <!-- GENERIC NAME -->
 
       <div class="form-group">
 
         <label>
-          Medicine Photo
+          Generic Name
         </label>
 
 
         <input
-          type="file"
-          id="photoFile"
-          accept="image/*"
-          onchange="previewMedicinePhoto()">
+          id="medicineGenericName"
+          type="text"
+          placeholder="Enter generic name"
+        >
+
+      </div>
 
 
 
-        <div class="field-help">
+      <!-- FAVORITE -->
 
-          Select a medicine photo.
-          It will be uploaded to GitHub automatically.
-
-        </div>
-
-
-
-        <!-- PHOTO PREVIEW -->
-
-        <div
-          id="photoPreviewContainer"
-          class="photo-preview-container hidden">
-
-          <img
-            id="photoPreview"
-            class="photo-preview"
-            alt="Medicine photo preview">
-
-        </div>
-
-
-
-        <!-- UPLOAD STATUS -->
-
-        <div
-          id="photoUploadStatus"
-          class="photo-upload-status">
-        </div>
-
-
-
-        <!-- PHOTO FILE NAME -->
+      <div class="favorite-check">
 
         <input
-          type="hidden"
-          id="photo">
+          id="medicineFavorite"
+          type="checkbox"
+        >
+
+
+        <label
+          for="medicineFavorite">
+
+          ⭐ Mark as Favorite
+
+        </label>
 
       </div>
 
@@ -535,13 +439,13 @@
 
 
 
-    <!-- MODAL FOOTER -->
+    <!-- FOOTER -->
 
     <div class="modal-footer">
 
 
       <button
-        class="btn btn-secondary"
+        class="secondary-button"
         onclick="closeMedicineModal()">
 
         Cancel
@@ -550,8 +454,8 @@
 
 
       <button
-        class="btn btn-primary"
-        id="saveMedicineButton"
+        class="primary-button"
+        id="saveButton"
         onclick="saveMedicine()">
 
         Save
@@ -568,30 +472,28 @@
 
 
 
-<!-- =========================================
-     MEDICINE DETAILS MODAL
-========================================= -->
+<!-- =====================================================
+     DELETE MODAL
+===================================================== -->
 
 <div
-  id="detailsModal"
+  id="deleteModal"
   class="modal-overlay hidden">
 
 
-  <div class="modal medicine-details-modal">
+  <div class="small-modal">
 
-
-    <!-- DETAILS HEADER -->
 
     <div class="modal-header">
 
-      <h3 id="detailsTitle">
-        Medicine Details
+      <h3>
+        Delete Medicine
       </h3>
 
 
       <button
-        class="modal-close"
-        onclick="closeDetailsModal()">
+        class="close-button"
+        onclick="closeDeleteModal()">
 
         ×
 
@@ -601,123 +503,33 @@
 
 
 
-    <!-- DETAILS BODY -->
-
-    <div class="details-body">
+    <div class="modal-body">
 
 
-      <!-- MEDICINE IMAGE -->
+      <p class="delete-warning">
 
-      <div
-        id="detailsPhotoContainer"
-        class="details-photo-container hidden">
+        Are you sure you want to delete
 
-        <img
-          id="detailsPhoto"
-          class="details-photo"
-          alt="Medicine photo">
+        <strong
+          id="deleteMedicineName">
+        </strong>?
 
-      </div>
+      </p>
 
 
 
-      <!-- MEDICINE NAME -->
+      <div class="form-group">
 
-      <div class="details-section">
-
-        <div class="details-label">
-          Medicine Name
-        </div>
-
-        <div
-          id="detailsName"
-          class="details-value details-name">
-        </div>
-
-      </div>
+        <label>
+          Enter passcode
+        </label>
 
 
-
-      <!-- GENERIC NAME -->
-
-      <div class="details-section">
-
-        <div class="details-label">
-          Generic Name
-        </div>
-
-        <div
-          id="detailsGeneric"
-          class="details-value">
-        </div>
-
-      </div>
-
-
-
-      <!-- USED FOR -->
-
-      <div class="details-section">
-
-        <div class="details-label">
-          Used For
-        </div>
-
-        <div
-          id="detailsUsedFor"
-          class="details-value">
-        </div>
-
-      </div>
-
-
-
-      <!-- CATEGORY -->
-
-      <div class="details-section">
-
-        <div class="details-label">
-          Category
-        </div>
-
-        <div
-          id="detailsCategory"
-          class="details-value">
-        </div>
-
-      </div>
-
-
-
-      <!-- USE -->
-
-      <div class="details-section">
-
-        <div class="details-label">
-          Use
-        </div>
-
-        <div
-          id="detailsUse"
-          class="details-value">
-        </div>
-
-      </div>
-
-
-
-      <!-- DESCRIPTION -->
-
-      <div class="details-section">
-
-        <div class="details-label">
-          Description
-        </div>
-
-        <div
-          id="detailsDescription"
-          class="details-value details-description">
-        </div>
+        <input
+          id="deletePasscode"
+          type="password"
+          placeholder="Passcode"
+        >
 
       </div>
 
@@ -726,25 +538,23 @@
 
 
 
-    <!-- DETAILS FOOTER -->
-
     <div class="modal-footer">
 
 
       <button
-        class="btn btn-secondary"
-        onclick="closeDetailsModal()">
+        class="secondary-button"
+        onclick="closeDeleteModal()">
 
-        Close
+        Cancel
 
       </button>
 
 
       <button
-        class="btn btn-primary"
-        id="detailsEditButton">
+        class="delete-button"
+        onclick="confirmDelete()">
 
-        Edit Medicine
+        Delete
 
       </button>
 
@@ -758,73 +568,157 @@
 
 
 
-<!-- =========================================
-     DUPLICATE MEDICINE MODAL
-========================================= -->
+<!-- =====================================================
+     SETTINGS MODAL
+===================================================== -->
+
+<div
+  id="settingsModal"
+  class="modal-overlay hidden">
+
+
+  <div class="small-modal settings-modal">
+
+
+    <!-- SETTINGS HEADER -->
+
+    <div class="modal-header">
+
+      <h3>
+        Settings
+      </h3>
+
+
+      <button
+        class="close-button"
+        onclick="closeSettings()">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+
+    <!-- SETTINGS BODY -->
+
+    <div class="modal-body">
+
+
+      <h4>
+        Categories
+      </h4>
+
+
+
+      <!-- =================================================
+           ADD CATEGORY
+      ================================================= -->
+
+      <div class="add-category-row">
+
+
+        <!-- CATEGORY NAME -->
+
+        <input
+          id="newCategory"
+          type="text"
+          placeholder="Add category"
+        >
+
+
+        <!-- CATEGORY ICON -->
+
+        <input
+          id="newCategoryIcon"
+          class="category-icon-input"
+          type="text"
+          placeholder="😊"
+          maxlength="4"
+          title="Enter an emoji/icon"
+        >
+
+
+        <!-- ADD BUTTON -->
+
+        <button
+          class="primary-button"
+          onclick="addNewCategory()">
+
+          Add
+
+        </button>
+
+
+      </div>
+
+
+
+      <div class="settings-help">
+
+        Enter category name and an emoji/icon.
+
+      </div>
+
+
+
+      <!-- =================================================
+           CATEGORY LIST
+      ================================================= -->
+
+      <div
+        id="settingsCategoryList"
+        class="settings-category-list">
+
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     DUPLICATE MODAL
+===================================================== -->
 
 <div
   id="duplicateModal"
   class="modal-overlay hidden">
 
 
-  <div class="modal duplicate-modal">
+  <div class="small-modal duplicate-modal">
 
 
-    <div class="modal-header">
-
-      <h3>
-        Medicine Already Exists
-      </h3>
-
-
-      <button
-        class="modal-close"
-        onclick="closeDuplicateModal()">
-
-        ×
-
-      </button>
-
+    <div class="duplicate-icon">
+      ⚠️
     </div>
 
 
-    <div class="modal-body">
-
-      <div class="duplicate-icon">
-        ⚠️
-      </div>
+    <h3>
+      Duplicate Medicine
+    </h3>
 
 
-      <p
-        id="duplicateMessage"
-        class="duplicate-message">
+    <p id="duplicateMessage">
 
-        This medicine already exists.
+      This medicine already exists.
 
-      </p>
+    </p>
 
 
-      <p class="duplicate-help">
+    <button
+      class="primary-button"
+      onclick="closeDuplicateModal()">
 
-        Please check the existing medicine
-        before adding another one.
+      OK
 
-      </p>
-
-    </div>
-
-
-    <div class="modal-footer">
-
-      <button
-        class="btn btn-primary"
-        onclick="closeDuplicateModal()">
-
-        OK
-
-      </button>
-
-    </div>
+    </button>
 
 
   </div>
@@ -833,9 +727,9 @@
 
 
 
-<!-- =========================================
+<!-- =====================================================
      JAVASCRIPT
-========================================= -->
+===================================================== -->
 
 <?!= include("scripts"); ?>
 

@@ -1,888 +1,1369 @@
 <style>
 
-/* =========================================
+/* =====================================================
    RESET
-========================================= */
+===================================================== */
 
-* {
-  box-sizing: border-box;
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
+
 
 html,
-body {
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: Arial, sans-serif;
-  background: #f5f7fa;
-  color: #172033;
+body{
+  width:100%;
+  min-height:100%;
 }
 
 
-/* =========================================
+body{
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  background:#f5f8fc;
+
+  color:#0b1730;
+
+  font-size:14px;
+
+}
+
+
+/* =====================================================
    HEADER
-========================================= */
+===================================================== */
 
-.app-header {
-  height: 78px;
-  background: #ffffff;
-  border-bottom: 1px solid #e2e6eb;
+.top-header{
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  height:96px;
 
-  padding: 0 20px;
-}
+  display:flex;
 
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
+  align-items:center;
 
-.logo {
-  width: 44px;
-  height: 44px;
+  justify-content:space-between;
 
-  background: #eaf7ee;
-  border-radius: 10px;
+  padding:0 28px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background:#ffffff;
 
-  font-size: 25px;
-}
+  border-bottom:1px solid #dce3ec;
 
-.app-title h1 {
-  margin: 0;
-  font-size: 22px;
-}
+  gap:20px;
 
-.app-title span {
-  display: block;
-  margin-top: 2px;
-
-  color: #667085;
-  font-size: 13px;
-}
-
-.current-date {
-  color: #667085;
-  font-size: 14px;
 }
 
 
-/* =========================================
+.brand{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:14px;
+
+  min-width:260px;
+
+}
+
+
+.brand-icon{
+
+  width:48px;
+
+  height:48px;
+
+  border-radius:13px;
+
+  background:#eaf8ef;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  font-size:28px;
+
+}
+
+
+.brand-title{
+
+  font-size:24px;
+
+  font-weight:700;
+
+  color:#07142c;
+
+}
+
+
+.brand-subtitle{
+
+  color:#526985;
+
+  margin-top:2px;
+
+  font-size:13px;
+
+}
+
+
+.header-controls{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+  flex:1;
+
+  justify-content:flex-end;
+
+}
+
+
+.favorites-button{
+
+  height:52px;
+
+  padding:0 17px;
+
+  border:1px solid #efd27b;
+
+  background:#fffaf0;
+
+  border-radius:13px;
+
+  color:#26344d;
+
+  font-size:14px;
+
+  cursor:pointer;
+
+}
+
+
+.count-badge{
+
+  display:inline-flex;
+
+  min-width:22px;
+
+  height:22px;
+
+  padding:0 6px;
+
+  align-items:center;
+
+  justify-content:center;
+
+  border-radius:20px;
+
+  background:#ffffff;
+
+  margin-left:5px;
+
+  font-weight:700;
+
+}
+
+
+.search-box{
+
+  height:52px;
+
+  width:330px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:8px;
+
+  padding:0 14px;
+
+  border:1px solid #d5deea;
+
+  border-radius:13px;
+
+  background:#ffffff;
+
+  color:#536b88;
+
+}
+
+
+.search-box input{
+
+  border:0;
+
+  outline:none;
+
+  flex:1;
+
+  min-width:0;
+
+  font-size:14px;
+
+  color:#17243a;
+
+}
+
+
+.search-clear{
+
+  border:0;
+
+  background:none;
+
+  cursor:pointer;
+
+  font-size:20px;
+
+  color:#718096;
+
+}
+
+
+.sort-select{
+
+  height:52px;
+
+  border:1px solid #d5deea;
+
+  border-radius:13px;
+
+  padding:0 13px;
+
+  background:#ffffff;
+
+  color:#18263e;
+
+  outline:none;
+
+  font-size:14px;
+
+  cursor:pointer;
+
+}
+
+
+.settings-button{
+
+  height:52px;
+
+  padding:0 17px;
+
+  border:1px solid #d5deea;
+
+  background:#ffffff;
+
+  border-radius:13px;
+
+  cursor:pointer;
+
+  font-size:14px;
+
+}
+
+
+/* =====================================================
+   CATEGORY AREA
+===================================================== */
+
+.category-area{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+  padding:16px 10px 10px;
+
+  background:#f5f8fc;
+
+}
+
+
+.category-scroller{
+
+  display:flex;
+
+  gap:16px;
+
+  overflow-x:auto;
+
+  scroll-behavior:smooth;
+
+  padding:0 8px 10px;
+
+  flex:1;
+
+}
+
+
+.category-scroller::-webkit-scrollbar{
+
+  height:8px;
+
+}
+
+
+.category-scroller::-webkit-scrollbar-thumb{
+
+  background:#9ca8b8;
+
+  border-radius:10px;
+
+}
+
+
+.category-card{
+
+  min-width:185px;
+
+  height:165px;
+
+  border-radius:18px;
+
+  padding:18px;
+
+  display:flex;
+
+  flex-direction:column;
+
+  justify-content:center;
+
+  align-items:center;
+
+  cursor:pointer;
+
+  border:2px solid transparent;
+
+  flex-shrink:0;
+
+  transition:0.15s ease;
+
+}
+
+
+.category-card:hover{
+
+  transform:translateY(-2px);
+
+}
+
+
+.category-card.active{
+
+  border-color:#087cff;
+
+}
+
+
+.category-icon{
+
+  font-size:43px;
+
+  margin-bottom:7px;
+
+}
+
+
+.category-name{
+
+  font-size:18px;
+
+  font-weight:700;
+
+  color:#111c31;
+
+}
+
+
+.category-count{
+
+  color:#62748d;
+
+  margin-top:5px;
+
+}
+
+
+.category-arrow{
+
+  width:45px;
+
+  height:45px;
+
+  border:0;
+
+  border-radius:50%;
+
+  background:#ffffff;
+
+  box-shadow:0 3px 14px rgba(20,40,70,.10);
+
+  font-size:30px;
+
+  cursor:pointer;
+
+  flex-shrink:0;
+
+}
+
+
+/* =====================================================
+   CATEGORY COLORS
+===================================================== */
+
+.category-color-0{
+  background:#e7f3ff;
+}
+
+.category-color-1{
+  background:#eaf9df;
+}
+
+.category-color-2{
+  background:#fff1d6;
+}
+
+.category-color-3{
+  background:#ffe7f0;
+}
+
+.category-color-4{
+  background:#e4f8fb;
+}
+
+.category-color-5{
+  background:#eee7ff;
+}
+
+.category-color-6{
+  background:#fff2e4;
+}
+
+.category-color-7{
+  background:#e8f5ef;
+}
+
+
+/* =====================================================
    MAIN
-========================================= */
+===================================================== */
 
-.main-content {
-  padding: 28px 20px;
+.main-content{
+
+  padding:10px 12px 30px;
+
 }
 
 
-/* =========================================
-   PAGE HEADER
-========================================= */
+.medicine-panel{
 
-.page-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  background:#ffffff;
 
-  margin-bottom: 20px;
-}
+  border:1px solid #dbe3ed;
 
-.page-header h2 {
-  margin: 0;
+  border-radius:18px;
 
-  font-size: 22px;
-  color: #172033;
-}
+  overflow:hidden;
 
-.page-header p {
-  margin: 4px 0 0;
+  box-shadow:
+    0 4px 16px rgba(25,45,75,.04);
 
-  color: #667085;
-  font-size: 13px;
 }
 
 
-/* =========================================
-   BUTTONS
-========================================= */
+.panel-header{
 
-.btn {
-  border: 0;
-  border-radius: 6px;
+  padding:22px 24px 18px;
 
-  padding: 9px 15px;
+  display:flex;
 
-  font-size: 14px;
-  cursor: pointer;
-}
+  justify-content:space-between;
 
-.btn-primary {
-  background: #16a34a;
-  color: #ffffff;
-}
+  align-items:center;
 
-.btn-primary:hover {
-  background: #15803d;
-}
-
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  background: #ffffff;
-  color: #344054;
-
-  border: 1px solid #d0d5dd;
-}
-
-.btn-secondary:hover {
-  background: #f9fafb;
 }
 
 
-/* =========================================
-   TOOLBAR
-========================================= */
+.panel-title-row{
 
-.toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display:flex;
 
-  margin-bottom: 14px;
-}
+  align-items:center;
 
-.search-wrapper {
-  position: relative;
-  width: 360px;
-}
+  gap:12px;
 
-.search-input {
-  width: 100%;
-
-  height: 40px;
-
-  padding: 0 38px 0 12px;
-
-  border: 1px solid #d0d5dd;
-  border-radius: 6px;
-
-  background: #ffffff;
-
-  font-size: 14px;
-
-  outline: none;
-}
-
-.search-input:focus {
-  border-color: #16a34a;
-}
-
-.clear-search {
-  position: absolute;
-
-  right: 8px;
-  top: 50%;
-
-  transform: translateY(-50%);
-
-  width: 24px;
-  height: 24px;
-
-  border: 0;
-  border-radius: 50%;
-
-  background: transparent;
-
-  color: #667085;
-
-  font-size: 20px;
-
-  cursor: pointer;
-}
-
-.clear-search:hover {
-  background: #f2f4f7;
-}
-
-.toolbar-right {
-  color: #667085;
-  font-size: 13px;
 }
 
 
-/* =========================================
+.panel-icon{
+
+  font-size:39px;
+
+}
+
+
+.panel-title-row h2{
+
+  font-size:27px;
+
+  color:#09162e;
+
+}
+
+
+.panel-subtitle{
+
+  margin-left:51px;
+
+  margin-top:2px;
+
+  color:#64758c;
+
+}
+
+
+.add-button{
+
+  border:0;
+
+  border-radius:13px;
+
+  background:#12a34a;
+
+  color:white;
+
+  font-size:15px;
+
+  padding:14px 22px;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 5px 12px rgba(18,163,74,.18);
+
+}
+
+
+.add-button:hover{
+
+  background:#0d913f;
+
+}
+
+
+/* =====================================================
    TABLE
-========================================= */
+===================================================== */
 
-.table-container {
-  background: #ffffff;
+.table-wrapper{
 
-  border: 1px solid #dfe3e8;
+  margin:0 22px 22px;
 
-  border-radius: 8px;
+  border:1px solid #dbe2eb;
 
-  overflow: hidden;
-}
+  border-radius:14px;
 
-.medicine-table {
-  width: 100%;
+  overflow:auto;
 
-  border-collapse: collapse;
-
-  font-size: 14px;
-}
-
-.medicine-table th {
-  background: #f8fafc;
-
-  color: #172033;
-
-  font-weight: 600;
-
-  text-align: left;
-
-  padding: 12px 14px;
-
-  border-bottom: 1px solid #e1e5ea;
-
-  cursor: pointer;
-
-  white-space: nowrap;
-}
-
-.medicine-table th:hover {
-  background: #f1f5f9;
-}
-
-.medicine-table td {
-  padding: 12px 14px;
-
-  border-bottom: 1px solid #e5e7eb;
-
-  vertical-align: middle;
-}
-
-.medicine-table tbody tr:last-child td {
-  border-bottom: 0;
-}
-
-.medicine-table tbody tr:hover {
-  background: #fafafa;
 }
 
 
-/* =========================================
-   SORT ICON
-========================================= */
+.medicine-table{
 
-.sort-icon {
-  margin-left: 5px;
+  width:100%;
 
-  color: #16a34a;
+  border-collapse:collapse;
 
-  font-size: 11px;
+  min-width:850px;
+
 }
 
 
-/* =========================================
-   MEDICINE NAME
-========================================= */
+.medicine-table th{
 
-.medicine-name {
-  font-weight: 600;
-}
+  background:#eef3f8;
 
-.medicine-link {
-  border: 0;
+  padding:13px 16px;
 
-  padding: 0;
+  text-align:left;
 
-  background: transparent;
+  font-weight:700;
 
-  color: #172033;
+  color:#12213a;
 
-  font-size: 14px;
-
-  font-weight: 600;
-
-  cursor: pointer;
-
-  text-align: left;
-}
-
-.medicine-link:hover {
-  color: #16a34a;
-
-  text-decoration: underline;
 }
 
 
-/* =========================================
-   ACTION BUTTONS
-========================================= */
+.medicine-table td{
 
-.action-button {
-  padding: 5px 10px;
+  padding:15px 16px;
 
-  margin-right: 5px;
+  border-top:1px solid #e0e6ee;
 
-  background: #ffffff;
+  color:#20304a;
 
-  border: 1px solid #d0d5dd;
-
-  border-radius: 5px;
-
-  color: #344054;
-
-  font-size: 12px;
-
-  cursor: pointer;
-}
-
-.action-button:hover {
-  background: #f2f4f7;
-}
-
-.action-button.delete {
-  color: #b42318;
-}
-
-.action-button.delete:hover {
-  background: #fff1f0;
 }
 
 
-/* =========================================
-   LOADING / EMPTY / ERROR
-========================================= */
+.medicine-table tbody tr:hover{
 
-.loading-cell,
-.empty-cell,
-.error-cell {
-  text-align: center;
+  background:#f9fbfd;
 
-  padding: 30px !important;
-
-  color: #667085;
-}
-
-.error-cell {
-  color: #b42318;
 }
 
 
-/* =========================================
-   MODAL
-========================================= */
+.favorite-column{
 
-.modal-overlay {
-  position: fixed;
+  width:65px;
 
-  inset: 0;
+  text-align:center !important;
 
-  background: rgba(16, 24, 40, 0.45);
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  padding: 20px;
-
-  z-index: 1000;
-}
-
-.modal-overlay.hidden {
-  display: none;
-}
-
-.modal {
-  width: 100%;
-
-  max-width: 560px;
-
-  max-height: 90vh;
-
-  background: #ffffff;
-
-  border-radius: 10px;
-
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18);
-
-  overflow: hidden;
-
-  display: flex;
-
-  flex-direction: column;
 }
 
 
-/* =========================================
-   MODAL HEADER
-========================================= */
+.edit-column{
 
-.modal-header {
-  display: flex;
+  width:80px;
 
-  align-items: center;
-  justify-content: space-between;
-
-  padding: 16px 20px;
-
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.modal-header h3 {
-  margin: 0;
-
-  font-size: 18px;
-}
-
-.modal-close {
-  width: 32px;
-  height: 32px;
-
-  border: 0;
-
-  background: transparent;
-
-  border-radius: 5px;
-
-  font-size: 24px;
-
-  color: #667085;
-
-  cursor: pointer;
-}
-
-.modal-close:hover {
-  background: #f2f4f7;
 }
 
 
-/* =========================================
-   MODAL BODY
-========================================= */
+.favorite-star{
 
-.modal-body {
-  padding: 20px;
+  border:0;
 
-  overflow-y: auto;
+  background:none;
+
+  cursor:pointer;
+
+  font-size:20px;
+
+  line-height:1;
+
 }
 
-.form-group {
-  margin-bottom: 16px;
+
+.favorite-star.off{
+
+  color:#718096;
+
 }
 
-.form-group:last-child {
-  margin-bottom: 0;
+
+.favorite-star.on{
+
+  color:#f1b800;
+
 }
 
-.form-group label {
-  display: block;
 
-  margin-bottom: 6px;
+.medicine-name{
 
-  color: #344054;
+  font-weight:700;
 
-  font-size: 13px;
+  color:#0a172d;
 
-  font-weight: 600;
 }
 
-.required {
-  color: #d92d20;
+
+.online-link{
+
+  color:#0878ed;
+
+  text-decoration:underline;
+
 }
+
+
+.no-link{
+
+  color:#9aa6b5;
+
+}
+
+
+.edit-button{
+
+  border:1px solid #d5deea;
+
+  background:#ffffff;
+
+  border-radius:9px;
+
+  width:42px;
+
+  height:38px;
+
+  cursor:pointer;
+
+  font-size:18px;
+
+}
+
+
+.edit-button:hover{
+
+  background:#f3f7fb;
+
+}
+
+
+/* =====================================================
+   MODALS
+===================================================== */
+
+.modal-overlay{
+
+  position:fixed;
+
+  inset:0;
+
+  background:rgba(12,24,40,.48);
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  z-index:1000;
+
+  padding:20px;
+
+}
+
+
+.hidden{
+
+  display:none !important;
+
+}
+
+
+.modal{
+
+  width:520px;
+
+  max-width:100%;
+
+  background:#ffffff;
+
+  border-radius:15px;
+
+  overflow:hidden;
+
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.25);
+
+}
+
+
+.small-modal{
+
+  width:430px;
+
+  max-width:100%;
+
+  background:#ffffff;
+
+  border-radius:15px;
+
+  overflow:hidden;
+
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.25);
+
+}
+
+
+.modal-header{
+
+  min-height:64px;
+
+  padding:0 20px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  border-bottom:1px solid #e0e5eb;
+
+}
+
+
+.modal-header h3{
+
+  font-size:19px;
+
+}
+
+
+.close-button{
+
+  border:0;
+
+  background:none;
+
+  font-size:26px;
+
+  color:#66758a;
+
+  cursor:pointer;
+
+}
+
+
+.modal-body{
+
+  padding:22px;
+
+}
+
+
+.modal-footer{
+
+  padding:15px 20px;
+
+  border-top:1px solid #e0e5eb;
+
+  display:flex;
+
+  justify-content:flex-end;
+
+  gap:10px;
+
+}
+
+
+.form-group{
+
+  margin-bottom:17px;
+
+}
+
+
+.form-group label{
+
+  display:block;
+
+  margin-bottom:7px;
+
+  color:#263953;
+
+  font-weight:600;
+
+}
+
+
+.required{
+
+  color:#e00000;
+
+}
+
 
 .form-group input,
-.form-group textarea {
-  width: 100%;
+.form-group select{
 
-  border: 1px solid #d0d5dd;
+  width:100%;
 
-  border-radius: 6px;
+  height:44px;
 
-  padding: 9px 11px;
+  border:1px solid #ccd7e4;
 
-  font-family: inherit;
+  border-radius:8px;
 
-  font-size: 14px;
+  padding:0 12px;
 
-  outline: none;
+  outline:none;
+
+  background:#ffffff;
+
+  font-size:14px;
+
 }
 
-.form-group input {
-  height: 40px;
-}
-
-.form-group textarea {
-  resize: vertical;
-}
 
 .form-group input:focus,
-.form-group textarea:focus {
-  border-color: #16a34a;
-}
+.form-group select:focus{
 
-.field-help {
-  margin-top: 5px;
+  border-color:#12a34a;
 
-  color: #667085;
+  box-shadow:
+    0 0 0 2px rgba(18,163,74,.10);
 
-  font-size: 11px;
 }
 
 
-/* =========================================
-   MODAL FOOTER
-========================================= */
+.favorite-check{
 
-.modal-footer {
-  display: flex;
+  display:flex;
 
-  align-items: center;
-  justify-content: flex-end;
+  align-items:center;
 
-  gap: 8px;
+  gap:9px;
 
-  padding: 14px 20px;
+  margin-top:5px;
 
-  border-top: 1px solid #e5e7eb;
-
-  background: #fafafa;
 }
 
 
-/* =========================================
-   DETAILS MODAL
-========================================= */
+.favorite-check input{
 
-.medicine-details-modal {
-  max-width: 600px;
-}
+  width:18px;
 
-.details-body {
-  padding: 20px;
+  height:18px;
 
-  overflow-y: auto;
 }
 
 
-/* =========================================
-   MEDICINE PHOTO
-========================================= */
+.primary-button,
+.secondary-button,
+.delete-button{
 
-.details-photo-container {
-  width: 100%;
+  border-radius:8px;
 
-  margin-bottom: 20px;
+  padding:10px 17px;
 
-  text-align: center;
-}
+  cursor:pointer;
 
-.details-photo-container.hidden {
-  display: none;
-}
+  font-size:14px;
 
-.details-photo {
-  max-width: 280px;
-
-  max-height: 260px;
-
-  margin: 0 auto;
-
-  object-fit: contain;
-
-  border-radius: 8px;
-
-  border: 1px solid #e5e7eb;
-
-  background: #ffffff;
 }
 
 
-/* =========================================
-   DETAILS
-========================================= */
+.primary-button{
 
-.details-section {
-  margin-bottom: 16px;
-}
+  border:0;
 
-.details-section:last-child {
-  margin-bottom: 0;
-}
+  background:#12a34a;
 
-.details-label {
-  margin-bottom: 4px;
+  color:#ffffff;
 
-  color: #667085;
-
-  font-size: 12px;
-
-  font-weight: 600;
-
-  text-transform: uppercase;
-}
-
-.details-value {
-  color: #172033;
-
-  font-size: 14px;
-
-  line-height: 1.6;
-}
-
-.details-name {
-  font-size: 17px;
-
-  font-weight: 600;
-}
-
-.details-description {
-  white-space: pre-wrap;
 }
 
 
-/* =========================================
-   MOBILE
-========================================= */
+.secondary-button{
 
-@media (max-width: 800px) {
+  border:1px solid #cdd7e3;
 
-  .app-header {
-    height: auto;
+  background:#ffffff;
 
-    padding: 14px 16px;
+  color:#21314a;
 
-    gap: 10px;
+}
+
+
+.delete-button{
+
+  border:0;
+
+  background:#d93025;
+
+  color:#ffffff;
+
+}
+
+
+.delete-warning{
+
+  line-height:1.6;
+
+  margin-bottom:20px;
+
+}
+
+
+/* =====================================================
+   SETTINGS
+===================================================== */
+
+.add-category-row{
+
+  display:flex;
+
+  gap:8px;
+
+  margin:15px 0;
+
+}
+
+
+.add-category-row input{
+
+  flex:1;
+
+  height:42px;
+
+  border:1px solid #ccd7e4;
+
+  border-radius:8px;
+
+  padding:0 11px;
+
+  outline:none;
+
+}
+
+
+.settings-category-list{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:7px;
+
+  max-height:300px;
+
+  overflow:auto;
+
+}
+
+
+.settings-category-item{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  padding:10px 12px;
+
+  background:#f5f8fb;
+
+  border-radius:8px;
+
+}
+
+
+.remove-category{
+
+  border:0;
+
+  background:none;
+
+  color:#d93025;
+
+  cursor:pointer;
+
+  font-size:17px;
+
+}
+
+
+/* =====================================================
+   DUPLICATE
+===================================================== */
+
+.duplicate-modal{
+
+  padding:30px;
+
+  text-align:center;
+
+}
+
+
+.duplicate-icon{
+
+  font-size:40px;
+
+  margin-bottom:12px;
+
+}
+
+
+.duplicate-modal h3{
+
+  margin-bottom:10px;
+
+}
+
+
+.duplicate-modal p{
+
+  color:#5d6c80;
+
+  line-height:1.5;
+
+  margin-bottom:22px;
+
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media(max-width:1000px){
+
+  .top-header{
+
+    height:auto;
+
+    padding:15px;
+
+    align-items:flex-start;
+
+    flex-direction:column;
+
   }
 
-  .current-date {
-    display: none;
+
+  .header-controls{
+
+    width:100%;
+
+    justify-content:flex-start;
+
+    flex-wrap:wrap;
+
   }
 
-  .main-content {
-    padding: 20px 12px;
-  }
 
-  .page-header {
-    align-items: flex-start;
+  .search-box{
 
-    gap: 12px;
-  }
+    flex:1;
 
-  .search-wrapper {
-    width: 100%;
-  }
+    min-width:240px;
 
-  .toolbar {
-    flex-direction: column;
-
-    align-items: stretch;
-
-    gap: 10px;
-  }
-
-  .toolbar-right {
-    text-align: right;
-  }
-
-  .table-container {
-    overflow-x: auto;
-  }
-
-  .medicine-table {
-    min-width: 850px;
-  }
-
-  .modal-overlay {
-    padding: 10px;
-  }
-
-  .modal {
-    max-height: 95vh;
   }
 
 }
 
-/* =========================================
-   PHOTO PREVIEW
-========================================= */
 
-.photo-preview-container {
-  margin-top: 12px;
+@media(max-width:650px){
+
+  .category-card{
+
+    min-width:155px;
+
+    height:145px;
+
+  }
+
+
+  .panel-header{
+
+    align-items:flex-start;
+
+    flex-direction:column;
+
+    gap:15px;
+
+  }
+
+
+  .add-button{
+
+    width:100%;
+
+  }
+
+
+  .table-wrapper{
+
+    margin:0 10px 10px;
+
+  }
+
 }
 
-.photo-preview-container.hidden {
-  display: none;
+.delete-row-button{
+  margin-left:5px;
 }
 
-.photo-preview {
-  max-width: 180px;
-  max-height: 180px;
+/* =====================================================
+   SETTINGS CATEGORY EDIT
+===================================================== */
 
-  object-fit: contain;
+.settings-add-title{
 
-  border: 1px solid #d0d5dd;
-  border-radius: 8px;
+  font-weight:700;
 
-  background: #ffffff;
+  color:#1b2b43;
+
+  margin-bottom:8px;
+
 }
 
-.photo-upload-status {
-  margin-top: 8px;
 
-  color: #667085;
+.category-icon-input{
 
-  font-size: 12px;
+  width:70px !important;
+
+  text-align:center;
+
+  font-size:20px;
+
+  padding:0 5px !important;
+
 }
 
-/* =========================================
+
+.settings-help{
+
+  color:#718096;
+
+  font-size:12px;
+
+  margin-top:-8px;
+
+  margin-bottom:15px;
+
+}
+
+
+.category-setting-name{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:9px;
+
+}
+
+
+.setting-category-icon{
+
+  width:28px;
+
+  text-align:center;
+
+  font-size:20px;
+
+}
+
+
+.category-setting-actions{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:5px;
+
+}
+
+
+.category-edit-button{
+
+  border:0;
+
+  background:none;
+
+  cursor:pointer;
+
+  font-size:16px;
+
+  padding:3px 5px;
+
+}
+
+
+.category-edit-button:hover{
+
+  background:#e8eef5;
+
+  border-radius:5px;
+
+}
+
+
+.remove-category{
+
+  border:0;
+
+  background:none;
+
+  color:#d93025;
+
+  cursor:pointer;
+
+  font-size:18px;
+
+  padding:3px 7px;
+
+}
+
+
+.remove-category:hover{
+
+  background:#ffe9e7;
+
+  border-radius:5px;
+
+}
+
+
+/* =====================================================
    FAVORITE
-========================================= */
+===================================================== */
 
-.favorite-column {
-  width: 55px !important;
-  text-align: center !important;
-}
+.favorite-star{
 
-.favorite-button {
-  border: 0;
-  background: transparent;
+  width:34px;
 
-  padding: 2px 6px;
+  height:34px;
 
-  font-size: 22px;
-  line-height: 1;
+  display:inline-flex;
 
-  color: #98a2b3;
+  align-items:center;
 
-  cursor: pointer;
+  justify-content:center;
 
-  transition: transform 0.15s ease,
-              color 0.15s ease;
-}
+  border:0;
 
-.favorite-button:hover {
-  color: #f59e0b;
-  transform: scale(1.15);
-}
+  background:transparent;
 
-.favorite-button.favorite-active {
-  color: #f59e0b;
+  cursor:pointer;
+
+  font-size:21px;
+
+  transition:
+    transform .12s ease;
+
 }
 
 
-/* =========================================
-   CATEGORY
-========================================= */
+.favorite-star:hover{
 
-.form-group select {
-  width: 100%;
+  transform:scale(1.18);
 
-  height: 40px;
-
-  padding: 0 11px;
-
-  border: 1px solid #d0d5dd;
-
-  border-radius: 6px;
-
-  background: #ffffff;
-
-  color: #172033;
-
-  font-family: inherit;
-
-  font-size: 14px;
-
-  outline: none;
-
-  cursor: pointer;
-}
-
-.form-group select:focus {
-  border-color: #16a34a;
 }
 
 
-/* =========================================
-   CATEGORY BADGE
-========================================= */
+.favorite-star.on{
 
-.category-badge {
-  display: inline-block;
+  color:#e6ad00;
 
-  padding: 4px 8px;
-
-  border-radius: 12px;
-
-  background: #eef7f0;
-
-  color: #15803d;
-
-  font-size: 11px;
-
-  font-weight: 600;
-
-  white-space: nowrap;
 }
 
 
-/* =========================================
-   DUPLICATE POPUP
-========================================= */
+.favorite-star.off{
 
-.duplicate-modal {
-  max-width: 430px;
-}
+  color:#718096;
 
-.duplicate-modal .modal-body {
-  text-align: center;
-
-  padding: 28px 24px;
-}
-
-.duplicate-icon {
-  font-size: 42px;
-
-  margin-bottom: 12px;
-}
-
-.duplicate-message {
-  margin: 0;
-
-  color: #172033;
-
-  font-size: 15px;
-
-  font-weight: 600;
-
-  line-height: 1.5;
-}
-
-.duplicate-help {
-  margin: 10px 0 0;
-
-  color: #667085;
-
-  font-size: 13px;
-
-  line-height: 1.5;
 }
 
 </style>
