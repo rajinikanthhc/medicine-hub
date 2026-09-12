@@ -456,27 +456,37 @@
 
     <div class="modal-footer">
 
+  <button
+    class="delete-from-edit-button hidden"
+    id="deleteFromEditButton"
+    onclick="deleteFromEdit()">
 
-      <button
-        class="secondary-button"
-        onclick="closeMedicineModal()">
+    🗑️ Delete
 
-        Cancel
+  </button>
 
-      </button>
+  <div>
 
+    <button
+      class="secondary-button"
+      onclick="closeMedicineModal()">
 
-      <button
-        class="primary-button"
-        id="saveButton"
-        onclick="saveMedicine()">
+      Cancel
 
-        Save
+    </button>
 
-      </button>
+    <button
+      class="primary-button"
+      id="saveButton"
+      onclick="saveMedicine()">
 
+      Save
 
-    </div>
+    </button>
+
+  </div>
+
+</div>
 
 
   </div>

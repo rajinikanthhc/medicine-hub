@@ -5,24 +5,20 @@
 ===================================================== */
 
 let medicines = [];
-
 let categories = [];
 
 let selectedCategory = "ALL";
-
 let searchText = "";
-
 let favoritesOnly = false;
 
 let editingOriginalName = "";
-
 let medicineBeingDeleted = "";
 
 let currentSort = "az";
 
 
 /* =====================================================
-   CATEGORY DATA
+   CATEGORY ICONS
 ===================================================== */
 
 const defaultCategoryIcons = {
@@ -49,27 +45,61 @@ const defaultCategoryIcons = {
 };
 
 
+/* =====================================================
+   FAVORITE CHECK
+   Handles TRUE, true, Yes, 1, etc.
+===================================================== */
+
+function isFavorite(medicine) {
+
+  const value = medicine.favorite;
+
+  if (value === true) {
+    return true;
+  }
+
+  if (typeof value === "string") {
+
+    const text =
+      value.trim().toLowerCase();
+
+    return (
+      text === "true" ||
+      text === "yes" ||
+      text === "1" ||
+      text === "⭐"
+    );
+
+  }
+
+  if (value === 1) {
+    return true;
+  }
+
+  return false;
+
+}
+
+
+/* =====================================================
+   CATEGORY ICON
+===================================================== */
+
 function getCategoryIcon(category) {
 
   const found =
-    categories.find(
-      function(item) {
+    categories.find(function(item) {
 
-        return (
-          String(
-            item.name
-          )
+      return (
+        String(item.name || "")
           .trim()
           .toLowerCase() ===
-          String(
-            category || ""
-          )
+        String(category || "")
           .trim()
           .toLowerCase()
-        );
+      );
 
-      }
-    );
+    });
 
 
   if (
@@ -83,11 +113,9 @@ function getCategoryIcon(category) {
 
 
   const key =
-    String(
-      category || ""
-    )
-    .trim()
-    .toLowerCase();
+    String(category || "")
+      .trim()
+      .toLowerCase();
 
 
   return (
@@ -102,68 +130,57 @@ function getCategoryIcon(category) {
    PAGE LOAD
 ===================================================== */
 
-window.onload =
-  function() {
+window.onload = function() {
 
-    loadEverything();
+  loadEverything();
 
-  };
+};
 
 
 function loadEverything() {
 
-  /*
-   * Load medicines and categories
-   * independently so one does not
-   * block the other.
-   */
+  /* LOAD MEDICINES */
 
   google.script.run
 
-    .withSuccessHandler(
-      function(data) {
+    .withSuccessHandler(function(data) {
 
-        medicines =
-          data || [];
+      medicines =
+        data || [];
 
-        updateFavoriteCount();
+      updateFavoriteCount();
 
-        renderCategories();
+      renderCategories();
 
-        renderMedicines();
+      renderMedicines();
 
-      }
-    )
+    })
 
-    .withFailureHandler(
-      showError
-    )
+    .withFailureHandler(showError)
 
     .getMedicines();
 
 
+  /* LOAD CATEGORIES */
+
   google.script.run
 
-    .withSuccessHandler(
-      function(data) {
+    .withSuccessHandler(function(data) {
 
-        categories =
-          data || [];
+      categories =
+        data || [];
 
-        renderCategories();
+      renderCategories();
 
-        populateCategorySelect();
+      populateCategorySelect();
 
-        renderSettingsCategories();
+      renderSettingsCategories();
 
-        renderMedicines();
+      renderMedicines();
 
-      }
-    )
+    })
 
-    .withFailureHandler(
-      showError
-    )
+    .withFailureHandler(showError)
 
     .getCategories();
 
@@ -183,18 +200,14 @@ function renderCategories() {
 
 
   if (!container) {
-
     return;
-
   }
 
 
   container.innerHTML = "";
 
 
-  /*
-   * ALL
-   */
+  /* ALL MEDICINES */
 
   container.appendChild(
 
@@ -208,9 +221,7 @@ function renderCategories() {
   );
 
 
-  /*
-   * Categories
-   */
+  /* CATEGORIES */
 
   categories.forEach(
     function(category, index) {
@@ -223,13 +234,13 @@ function renderCategories() {
               String(
                 medicine.category || ""
               )
-              .trim()
-              .toLowerCase() ===
+                .trim()
+                .toLowerCase() ===
               String(
-                category.name
+                category.name || ""
               )
-              .trim()
-              .toLowerCase()
+                .trim()
+                .toLowerCase()
             );
 
           }
@@ -243,7 +254,9 @@ function renderCategories() {
           category.name,
 
           category.icon ||
-            "💊",
+            getCategoryIcon(
+              category.name
+            ),
 
           count,
 
@@ -260,7 +273,7 @@ function renderCategories() {
 
 
 /* =====================================================
-   CATEGORY CARD
+   CREATE CATEGORY CARD
 ===================================================== */
 
 function createCategoryCard(
@@ -306,15 +319,21 @@ function createCategoryCard(
   card.innerHTML =
 
     '<div class="category-icon">' +
+
       escapeHtml(icon) +
+
     '</div>' +
 
     '<div class="category-name">' +
+
       escapeHtml(
+
         category === "ALL"
           ? "All Medicines"
           : category
+
       ) +
+
     '</div>' +
 
     '<div class="category-count">' +
@@ -339,9 +358,7 @@ function createCategoryCard(
    SELECT CATEGORY
 ===================================================== */
 
-function selectCategory(
-  category
-) {
+function selectCategory(category) {
 
   selectedCategory =
     category;
@@ -366,9 +383,7 @@ function showFavorites() {
     !favoritesOnly;
 
 
-  if (
-    favoritesOnly
-  ) {
+  if (favoritesOnly) {
 
     selectedCategory =
       "ALL";
@@ -393,9 +408,8 @@ function updateFavoriteCount() {
     medicines.filter(
       function(medicine) {
 
-        return (
-          medicine.favorite ===
-          true
+        return isFavorite(
+          medicine
         );
 
       }
@@ -424,13 +438,16 @@ function updateFavoriteCount() {
 
 function handleSearch() {
 
-  searchText =
+  const input =
     document.getElementById(
       "searchInput"
-    )
-    .value
-    .trim()
-    .toLowerCase();
+    );
+
+
+  searchText =
+    input
+      ? input.value.trim().toLowerCase()
+      : "";
 
 
   const clearButton =
@@ -439,14 +456,54 @@ function handleSearch() {
     );
 
 
-  if (searchText) {
+  if (clearButton) {
 
-    clearButton.classList.remove(
-      "hidden"
-    );
+    if (searchText) {
+
+      clearButton.classList.remove(
+        "hidden"
+      );
+
+    }
+    else {
+
+      clearButton.classList.add(
+        "hidden"
+      );
+
+    }
 
   }
-  else {
+
+
+  renderMedicines();
+
+}
+
+
+function clearSearch() {
+
+  const input =
+    document.getElementById(
+      "searchInput"
+    );
+
+
+  if (input) {
+    input.value = "";
+  }
+
+
+  searchText = "";
+
+
+  const clearButton =
+    document.getElementById(
+      "clearSearch"
+    );
+
+
+  if (clearButton) {
 
     clearButton.classList.add(
       "hidden"
@@ -460,40 +517,24 @@ function handleSearch() {
 }
 
 
-function clearSearch() {
-
-  document.getElementById(
-    "searchInput"
-  ).value = "";
-
-
-  searchText = "";
-
-
-  document
-    .getElementById(
-      "clearSearch"
-    )
-    .classList.add(
-      "hidden"
-    );
-
-
-  renderMedicines();
-
-}
-
-
 /* =====================================================
    SORT
 ===================================================== */
 
 function changeSort() {
 
-  currentSort =
+  const select =
     document.getElementById(
       "sortSelect"
-    ).value;
+    );
+
+
+  if (select) {
+
+    currentSort =
+      select.value;
+
+  }
 
 
   renderMedicines();
@@ -502,7 +543,7 @@ function changeSort() {
 
 
 /* =====================================================
-   FILTER
+   FILTER MEDICINES
 ===================================================== */
 
 function getFilteredMedicines() {
@@ -511,9 +552,7 @@ function getFilteredMedicines() {
     medicines.slice();
 
 
-  /*
-   * Category
-   */
+  /* CATEGORY */
 
   if (
     selectedCategory !==
@@ -528,13 +567,13 @@ function getFilteredMedicines() {
             String(
               medicine.category || ""
             )
-            .trim()
-            .toLowerCase() ===
+              .trim()
+              .toLowerCase() ===
             String(
               selectedCategory
             )
-            .trim()
-            .toLowerCase()
+              .trim()
+              .toLowerCase()
           );
 
         }
@@ -543,21 +582,16 @@ function getFilteredMedicines() {
   }
 
 
-  /*
-   * Favorites
-   */
+  /* FAVORITES */
 
-  if (
-    favoritesOnly
-  ) {
+  if (favoritesOnly) {
 
     list =
       list.filter(
         function(medicine) {
 
-          return (
-            medicine.favorite ===
-            true
+          return isFavorite(
+            medicine
           );
 
         }
@@ -566,13 +600,9 @@ function getFilteredMedicines() {
   }
 
 
-  /*
-   * Search
-   */
+  /* SEARCH */
 
-  if (
-    searchText
-  ) {
+  if (searchText) {
 
     list =
       list.filter(
@@ -581,16 +611,13 @@ function getFilteredMedicines() {
           const combined = [
 
             medicine.name,
-
             medicine.category,
-
             medicine.onlineLink,
-
             medicine.genericName
 
           ]
-          .join(" ")
-          .toLowerCase();
+            .join(" ")
+            .toLowerCase();
 
 
           return combined.includes(
@@ -604,66 +631,26 @@ function getFilteredMedicines() {
 
 
   /*
-   * ONLY TWO SORTS:
-   *
-   * A → Z
-   * Z → A
+   * FAVORITES ALWAYS FIRST
+   * THEN A-Z OR Z-A
    */
 
   list.sort(
     function(a, b) {
 
-      const nameA =
-        String(
-          a.name || ""
-        ).toLowerCase();
+      const favoriteA =
+        isFavorite(a);
 
-
-      const nameB =
-        String(
-          b.name || ""
-        ).toLowerCase();
-
-
-      const result =
-        nameA.localeCompare(
-          nameB
-        );
+      const favoriteB =
+        isFavorite(b);
 
 
       if (
-        currentSort ===
-        "za"
+        favoriteA !==
+        favoriteB
       ) {
 
-        return -result;
-
-      }
-
-
-      return result;
-
-    }
-  );
-
-
-  /*
-   * IMPORTANT:
-   *
-   * Favorites are always
-   * shown above non-favorites,
-   * regardless of A-Z / Z-A.
-   */
-
-  list.sort(
-    function(a, b) {
-
-      if (
-        a.favorite !==
-        b.favorite
-      ) {
-
-        return a.favorite
+        return favoriteA
           ? -1
           : 1;
 
@@ -673,13 +660,17 @@ function getFilteredMedicines() {
       const nameA =
         String(
           a.name || ""
-        ).toLowerCase();
+        )
+          .trim()
+          .toLowerCase();
 
 
       const nameB =
         String(
           b.name || ""
-        ).toLowerCase();
+        )
+          .trim()
+          .toLowerCase();
 
 
       const result =
@@ -715,9 +706,7 @@ function renderMedicines() {
 
 
   if (!tbody) {
-
     return;
-
   }
 
 
@@ -747,7 +736,7 @@ function renderMedicines() {
 
       '<td colspan="6" ' +
       'style="text-align:center;' +
-      'padding:45px;color:#718096;">' +
+      'padding:35px;color:#718096;">' +
 
       (
         favoritesOnly
@@ -787,9 +776,7 @@ function renderMedicines() {
    PANEL TITLE
 ===================================================== */
 
-function updatePanelTitle(
-  list
-) {
+function updatePanelTitle(list) {
 
   const title =
     document.getElementById(
@@ -809,9 +796,12 @@ function updatePanelTitle(
     );
 
 
-  if (
-    favoritesOnly
-  ) {
+  if (!title || !count || !icon) {
+    return;
+  }
+
+
+  if (favoritesOnly) {
 
     title.textContent =
       "Favorites";
@@ -857,12 +847,10 @@ function updatePanelTitle(
 
 
 /* =====================================================
-   MEDICINE ROW
+   CREATE MEDICINE ROW
 ===================================================== */
 
-function createMedicineRow(
-  medicine
-) {
+function createMedicineRow(medicine) {
 
   const row =
     document.createElement(
@@ -886,9 +874,7 @@ function createMedicineRow(
       '<a class="online-link" ' +
 
       'href="' +
-      escapeAttribute(
-        link
-      ) +
+      escapeAttribute(link) +
       '" ' +
 
       'target="_blank" ' +
@@ -908,6 +894,18 @@ function createMedicineRow(
   }
 
 
+  const favorite =
+    isFavorite(
+      medicine
+    );
+
+
+  /*
+   * IMPORTANT:
+   * The entire row HTML is completed
+   * before JavaScript continues.
+   */
+
   row.innerHTML =
 
     '<td class="favorite-column">' +
@@ -915,9 +913,8 @@ function createMedicineRow(
       '<button ' +
 
       'class="favorite-star ' +
-
       (
-        medicine.favorite
+        favorite
           ? "on"
           : "off"
       ) +
@@ -927,7 +924,7 @@ function createMedicineRow(
       'title="' +
 
       (
-        medicine.favorite
+        favorite
           ? "Remove favorite"
           : "Add favorite"
       ) +
@@ -935,7 +932,7 @@ function createMedicineRow(
       '">' +
 
       (
-        medicine.favorite
+        favorite
           ? "⭐"
           : "☆"
       ) +
@@ -997,22 +994,11 @@ function createMedicineRow(
 
       '</button>' +
 
-
-      '<button ' +
-
-      'class="edit-button delete-row-button" ' +
-
-      'title="Delete">' +
-
-      '🗑️' +
-
-      '</button>' +
-
     '</td>';
 
 
   /*
-   * FAVORITE BUTTON
+   * FAVORITE
    */
 
   const favoriteButton =
@@ -1021,25 +1007,33 @@ function createMedicineRow(
     );
 
 
-  favoriteButton.onclick =
-    function() {
+  if (favoriteButton) {
 
-      toggleFavorite(
-        medicine
-      );
+    favoriteButton.onclick =
+      function() {
 
-    };
+        toggleFavorite(
+          medicine
+        );
+
+      };
+
+  }
 
 
   /*
    * EDIT
    */
 
-  row
-    .querySelector(
+  const editButton =
+    row.querySelector(
       ".edit-button"
-    )
-    .onclick =
+    );
+
+
+  if (editButton) {
+
+    editButton.onclick =
       function() {
 
         openEditMedicine(
@@ -1048,23 +1042,7 @@ function createMedicineRow(
 
       };
 
-
-  /*
-   * DELETE
-   */
-
-  row
-    .querySelector(
-      ".delete-row-button"
-    )
-    .onclick =
-      function() {
-
-        openDeleteMedicine(
-          medicine.name
-        );
-
-      };
+  }
 
 
   return row;
@@ -1076,12 +1054,12 @@ function createMedicineRow(
    TOGGLE FAVORITE
 ===================================================== */
 
-function toggleFavorite(
-  medicine
-) {
+function toggleFavorite(medicine) {
 
   const oldValue =
-    medicine.favorite === true;
+    isFavorite(
+      medicine
+    );
 
 
   const newValue =
@@ -1089,7 +1067,7 @@ function toggleFavorite(
 
 
   /*
-   * Immediately update UI.
+   * Update UI immediately
    */
 
   medicine.favorite =
@@ -1102,19 +1080,13 @@ function toggleFavorite(
 
 
   /*
-   * Save to Google Sheet.
+   * Save to sheet
    */
 
   google.script.run
 
     .withSuccessHandler(
-      function(result) {
-
-        /*
-         * Reload from sheet so the
-         * browser and sheet stay
-         * completely synchronized.
-         */
+      function() {
 
         google.script.run
 
@@ -1182,8 +1154,7 @@ function toggleFavorite(
 
 function openAddMedicine() {
 
-  editingOriginalName =
-    "";
+  editingOriginalName = "";
 
 
   document.getElementById(
@@ -1215,18 +1186,45 @@ function openAddMedicine() {
   populateCategorySelect();
 
 
-  document.getElementById(
-    "medicineCategory"
-  ).value =
-    selectedCategory === "ALL"
-      ? ""
-      : selectedCategory;
+  const categorySelect =
+    document.getElementById(
+      "medicineCategory"
+    );
+
+
+  if (categorySelect) {
+
+    categorySelect.value =
+      selectedCategory === "ALL"
+        ? ""
+        : selectedCategory;
+
+  }
 
 
   document.getElementById(
     "saveButton"
   ).textContent =
     "Save";
+
+
+  /*
+   * Hide delete for ADD
+   */
+
+  const deleteButton =
+    document.getElementById(
+      "deleteFromEditButton"
+    );
+
+
+  if (deleteButton) {
+
+    deleteButton.classList.add(
+      "hidden"
+    );
+
+  }
 
 
   document
@@ -1237,20 +1235,6 @@ function openAddMedicine() {
       "hidden"
     );
 
-
-  setTimeout(
-    function() {
-
-      document
-        .getElementById(
-          "medicineName"
-        )
-        .focus();
-
-    },
-    100
-  );
-
 }
 
 
@@ -1258,9 +1242,7 @@ function openAddMedicine() {
    EDIT MEDICINE
 ===================================================== */
 
-function openEditMedicine(
-  medicine
-) {
+function openEditMedicine(medicine) {
 
   editingOriginalName =
     medicine.name;
@@ -1275,7 +1257,7 @@ function openEditMedicine(
   document.getElementById(
     "medicineName"
   ).value =
-    medicine.name;
+    medicine.name || "";
 
 
   populateCategorySelect();
@@ -1302,13 +1284,34 @@ function openEditMedicine(
   document.getElementById(
     "medicineFavorite"
   ).checked =
-    medicine.favorite === true;
+    isFavorite(
+      medicine
+    );
 
 
   document.getElementById(
     "saveButton"
   ).textContent =
     "Save Changes";
+
+
+  /*
+   * Show delete inside edit
+   */
+
+  const deleteButton =
+    document.getElementById(
+      "deleteFromEditButton"
+    );
+
+
+  if (deleteButton) {
+
+    deleteButton.classList.remove(
+      "hidden"
+    );
+
+  }
 
 
   document
@@ -1335,9 +1338,7 @@ function populateCategorySelect() {
 
 
   if (!select) {
-
     return;
-
   }
 
 
@@ -1361,7 +1362,9 @@ function populateCategorySelect() {
       option.textContent =
         (
           category.icon ||
-          "💊"
+          getCategoryIcon(
+            category.name
+          )
         ) +
         " " +
         category.name;
@@ -1405,29 +1408,24 @@ function saveMedicine() {
   const medicine = {
 
     name:
-
       name,
 
     category:
-
       document.getElementById(
         "medicineCategory"
       ).value,
 
     onlineLink:
-
       document.getElementById(
         "medicineOnlineLink"
       ).value.trim(),
 
     genericName:
-
       document.getElementById(
         "medicineGenericName"
       ).value.trim(),
 
     favorite:
-
       document.getElementById(
         "medicineFavorite"
       ).checked
@@ -1563,9 +1561,7 @@ function closeMedicineModal() {
    DELETE
 ===================================================== */
 
-function openDeleteMedicine(
-  name
-) {
+function openDeleteMedicine(name) {
 
   medicineBeingDeleted =
     name;
@@ -1611,8 +1607,7 @@ function confirmDelete() {
   const passcode =
     document.getElementById(
       "deletePasscode"
-    )
-    .value;
+    ).value;
 
 
   if (!passcode) {
@@ -1646,6 +1641,33 @@ function confirmDelete() {
       medicineBeingDeleted,
       passcode
     );
+
+}
+
+
+/* =====================================================
+   DELETE FROM EDIT WINDOW
+===================================================== */
+
+function deleteFromEdit() {
+
+  if (!editingOriginalName) {
+
+    return;
+
+  }
+
+
+  const medicineName =
+    editingOriginalName;
+
+
+  closeMedicineModal();
+
+
+  openDeleteMedicine(
+    medicineName
+  );
 
 }
 
@@ -1696,9 +1718,7 @@ function renderSettingsCategories() {
 
 
   if (!container) {
-
     return;
-
   }
 
 
@@ -1764,10 +1784,6 @@ function renderSettingsCategories() {
         '</div>';
 
 
-      /*
-       * EDIT
-       */
-
       item
         .querySelector(
           ".category-edit-button"
@@ -1781,10 +1797,6 @@ function renderSettingsCategories() {
 
           };
 
-
-      /*
-       * DELETE
-       */
 
       item
         .querySelector(
@@ -1822,18 +1834,13 @@ function addNewCategory() {
     );
 
 
-  const iconInput =
-    document.getElementById(
-      "newCategoryIcon"
-    );
+  if (!input) {
+    return;
+  }
 
 
   const category =
     input.value.trim();
-
-
-  const icon =
-    iconInput.value.trim();
 
 
   if (!category) {
@@ -1845,6 +1852,30 @@ function addNewCategory() {
     return;
 
   }
+
+
+  /*
+   * Ask for icon here.
+   * This also works if the current
+   * Settings HTML does not yet have
+   * a separate icon input.
+   */
+
+  const icon =
+    prompt(
+      "Enter category icon / emoji:",
+      "💊"
+    );
+
+
+  if (icon === null) {
+    return;
+  }
+
+
+  const finalIcon =
+    icon.trim() ||
+    "💊";
 
 
   google.script.run
@@ -1868,8 +1899,6 @@ function addNewCategory() {
 
         input.value = "";
 
-        iconInput.value = "";
-
 
         loadEverything();
 
@@ -1882,7 +1911,7 @@ function addNewCategory() {
 
     .addCategory(
       category,
-      icon
+      finalIcon
     );
 
 }
@@ -1892,9 +1921,7 @@ function addNewCategory() {
    EDIT CATEGORY
 ===================================================== */
 
-function editCategory(
-  category
-) {
+function editCategory(category) {
 
   const newName =
     prompt(
@@ -1967,15 +1994,14 @@ function editCategory(
         }
 
 
-        /*
-         * Keep selected category
-         * synchronized if renamed.
-         */
-
         if (
-          selectedCategory
+          String(
+            selectedCategory
+          )
             .toLowerCase() ===
-          category.name
+          String(
+            category.name
+          )
             .toLowerCase()
         ) {
 
@@ -2007,9 +2033,7 @@ function editCategory(
    DELETE CATEGORY
 ===================================================== */
 
-function removeCategory(
-  category
-) {
+function removeCategory(category) {
 
   const used =
     medicines.some(
@@ -2019,8 +2043,8 @@ function removeCategory(
           String(
             medicine.category || ""
           )
-          .trim()
-          .toLowerCase() ===
+            .trim()
+            .toLowerCase() ===
           String(category)
             .trim()
             .toLowerCase()
@@ -2062,9 +2086,14 @@ function removeCategory(
       function() {
 
         if (
-          selectedCategory
+          String(
+            selectedCategory
+          )
             .toLowerCase() ===
-          category.toLowerCase()
+          String(
+            category
+          )
+            .toLowerCase()
         ) {
 
           selectedCategory =
@@ -2093,15 +2122,21 @@ function removeCategory(
    DUPLICATE POPUP
 ===================================================== */
 
-function showDuplicate(
-  message
-) {
+function showDuplicate(message) {
 
-  document.getElementById(
-    "duplicateMessage"
-  ).textContent =
-    message ||
-    "This item already exists.";
+  const element =
+    document.getElementById(
+      "duplicateMessage"
+    );
+
+
+  if (element) {
+
+    element.textContent =
+      message ||
+      "This item already exists.";
+
+  }
 
 
   document
@@ -2132,14 +2167,17 @@ function closeDuplicateModal() {
    CATEGORY SCROLL
 ===================================================== */
 
-function scrollCategories(
-  direction
-) {
+function scrollCategories(direction) {
 
   const scroller =
     document.getElementById(
       "categoryScroller"
     );
+
+
+  if (!scroller) {
+    return;
+  }
 
 
   scroller.scrollBy({
@@ -2159,9 +2197,7 @@ function scrollCategories(
    ERROR
 ===================================================== */
 
-function showError(
-  error
-) {
+function showError(error) {
 
   const message =
     error &&
@@ -2181,9 +2217,7 @@ function showError(
    ESCAPE HTML
 ===================================================== */
 
-function escapeHtml(
-  value
-) {
+function escapeHtml(value) {
 
   return String(
     value == null
@@ -2219,9 +2253,7 @@ function escapeHtml(
 }
 
 
-function escapeAttribute(
-  value
-) {
+function escapeAttribute(value) {
 
   return escapeHtml(
     value
@@ -2255,6 +2287,7 @@ document.addEventListener(
 
   }
 );
+
 
 /* =====================================================
    OPEN MEDICINE GOOGLE SHEET
