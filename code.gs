@@ -96,7 +96,7 @@ function getMedicines() {
         2,
         1,
         lastRow - 1,
-        5
+        6
       )
       .getValues();
 
@@ -135,9 +135,14 @@ function getMedicines() {
             row[3] || ""
           ).trim(),
 
+        notes:
+          String(
+            row[4] || ""
+          ).trim(),
+
         favorite:
           isFavoriteValue(
-            row[4]
+            row[5]
           )
 
       };
@@ -393,6 +398,10 @@ function addMedicine(medicine) {
       medicine.genericName || ""
     ).trim(),
 
+    String(
+      medicine.notes || ""
+    ).trim(),
+
     medicine.favorite === true
 
   ]);
@@ -434,7 +443,7 @@ function findMedicineByName(
         2,
         1,
         lastRow - 1,
-        5
+        6
       )
       .getValues();
 
@@ -661,7 +670,7 @@ function updateMedicine(
       rowNumber,
       1,
       1,
-      5
+      6
     )
     .setValues([
 
@@ -679,6 +688,10 @@ function updateMedicine(
 
         String(
           medicine.genericName || ""
+        ).trim(),
+
+        String(
+          medicine.notes || ""
         ).trim(),
 
         medicine.favorite === true
@@ -728,13 +741,13 @@ function toggleMedicineFavorite(
 
   /*
    * Explicitly write TRUE/FALSE
-   * to column E.
+   * to column F.
    */
 
   sheet
     .getRange(
       rowNumber,
-      5
+      6
     )
     .setValue(
       favorite === true
@@ -1172,7 +1185,7 @@ function updateMedicineCategories(
         2,
         1,
         values.length,
-        5
+        6
       )
       .setValues(
         values
@@ -1220,7 +1233,7 @@ function deleteCategory(
           2,
           1,
           medicineLastRow - 1,
-          5
+          6
         )
         .getValues();
 

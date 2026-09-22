@@ -902,7 +902,8 @@ body{
 
 
 .form-group input:focus,
-.form-group select:focus{
+.form-group select:focus,
+.form-group textarea:focus{
 
   border-color:#12a34a;
 
@@ -1498,4 +1499,35 @@ body{
 
 }
 
+/* =====================================================
+   NOTES COLUMN
+===================================================== */
+
+.notes-cell{
+  max-width:360px;
+  min-width:220px;
+  line-height:1.45;
+  color:#43546c !important;
+  white-space:normal;
+  word-break:break-word;
+}
+
+.medicine-table th:nth-child(5){
+  min-width:220px;
+}
+
+.medicine-table th:nth-child(6){
+  min-width:220px;
+}
+
+@media(max-width:900px){
+
+  .notes-cell{
+    min-width:200px;
+  }
+
+}
+
 </style>
+
+

@@ -613,7 +613,8 @@ function getFilteredMedicines() {
             medicine.name,
             medicine.category,
             medicine.onlineLink,
-            medicine.genericName
+            medicine.genericName,
+            medicine.notes
 
           ]
             .join(" ")
@@ -734,7 +735,7 @@ function renderMedicines() {
 
     row.innerHTML =
 
-      '<td colspan="6" ' +
+      '<td colspan="7" ' +
       'style="text-align:center;' +
       'padding:35px;color:#718096;">' +
 
@@ -982,6 +983,16 @@ function createMedicineRow(medicine) {
     '</td>' +
 
 
+    '<td class="notes-cell">' +
+
+      escapeHtml(
+        medicine.notes ||
+        "—"
+      ) +
+
+    '</td>' +
+
+
     '<td class="edit-column">' +
 
       '<button ' +
@@ -1179,6 +1190,11 @@ function openAddMedicine() {
 
 
   document.getElementById(
+    "medicineNotes"
+  ).value = "";
+
+
+  document.getElementById(
     "medicineFavorite"
   ).checked = false;
 
@@ -1279,6 +1295,12 @@ function openEditMedicine(medicine) {
     "medicineGenericName"
   ).value =
     medicine.genericName || "";
+
+
+  document.getElementById(
+    "medicineNotes"
+  ).value =
+    medicine.notes || "";
 
 
   document.getElementById(
@@ -1423,6 +1445,11 @@ function saveMedicine() {
     genericName:
       document.getElementById(
         "medicineGenericName"
+      ).value.trim(),
+
+    notes:
+      document.getElementById(
+        "medicineNotes"
       ).value.trim(),
 
     favorite:
@@ -2308,4 +2335,4 @@ function openMedicineSheet() {
 
 }
 
-</script>
+</script> 
